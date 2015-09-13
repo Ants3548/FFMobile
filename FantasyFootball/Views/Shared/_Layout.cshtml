@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>@ViewBag.Title</title>
+
+	<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link href="~/Content/css/1.0/mobile.css" rel="stylesheet" />
+
+	@*<link rel="stylesheet" media="(min-width: 400px)" href="~/Content/css/res-low.css" />
+		<link rel="stylesheet" media="(min-width: 1000px)" href="~/Content/css/res-mid.css" />
+		<link rel="stylesheet" media="(min-width: 1200px)" href="~/Content/css/res-high.css" />*@
+	@*@media screen and (min-width: 500px) and (max-width: 800px) { ... }*@
+	@*@media print and (min-resolution: 300dpi)*@
+	@RenderSection("HeadCSS", required: false)
+
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	@RenderSection("HeadScripts", required: false)
+
+</head>
+<body>
+	@RenderBody()
+
+	@RenderSection("BodyScripts", required: false)
+</body>
+</html>

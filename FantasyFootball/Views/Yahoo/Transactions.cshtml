@@ -1,0 +1,45 @@
+﻿@model List<FantasyFootball.Models.Transaction>
+
+@section HeadCSS
+{
+	<style type="text/css">
+		.playerRank { margin: 4px; }
+	</style>
+}
+
+<div data-role="page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Shared/Yahoo/_Menu.cshtml")
+	</div>
+	<div data-role="content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Transaction Transaction in Model)
+				{
+					<div class="ui-corner-all custom-corners" style="margin-bottom: 1em;">
+						<div class="ui-bar gdSlate shDark txWhite">
+							<h3>@Transaction.OwnerName</h3>
+							<i style="position: absolute; right: 0; padding-right: 1em;">@Transaction.Date</i>
+						</div>
+						<div class="ui-body ui-body-a roundBottomL roundBottomR" style="padding: 0; border-color: #bbb;">
+							@foreach (FantasyFootball.Models.Player Player in Transaction.Players)
+							{
+							<ul class="playerRank">
+								<li class="name gdWhite"><b class="ui-link">@Player.Name@((Player.Position == "DST") ? " D/ST" : "")</b></li>
+								<li class="pick txWhite txBold txCenter roundTopL roundBottomL @((Player.Added) ? "gdGreen" : "gdRed")" style="font-size: 2em;">@((Player.Added) ? "+" : "-")</li>
+								<li class="team">
+									<ul class="playerRole">
+										<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@Player.Team.ToLower()" width="30" height="40" /></li>
+										<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Player.Position</li>
+									</ul>
+								</li>
+							</ul>
+							}
+						</div>
+					</div>
+				}
+			}
+		}
+	</div>
+</div>

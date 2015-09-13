@@ -1,0 +1,116 @@
+﻿@charset "utf-8";
+
+/* Least important first! (Inheritance) */
+@import "../styles.css";
+@import "../colors.css";
+
+@import "icons.css";
+@import "corners.css";
+
+/*@import "/css/page.css";
+@import "/css/forms.css";
+
+@import "/css/480/menumain.css";*/
+
+body { background-color: #ddd; color: #333; font-family: Helvetica, Verdana, sans-serif; font-size: 110%; margin: 0; padding: 0; }
+
+/* jQuery Mobile Overrides */
+.ui-navbar .ui-btn-text { font-size: 2em; }
+
+/* Item Menu */
+ul.menu { list-style: none; margin: 10px; padding: 0; }
+ul.menu li a
+{
+	margin-bottom: -1px; padding: 12px 10px; border: 1px solid #999;
+	display: block; 	
+	font-size: 130%; background-color: #FFFFFF; text-decoration: none; 
+}
+ul.menu li a em { font-size: 80%; color: #454545; }
+
+/* Item List */
+ul.options { list-style: none; margin: 10px; padding: 0; }
+ul.options li
+{
+	margin-bottom: -1px; padding: 12px 10px; border: 1px solid #999;
+	display: block; 	
+	font-size: 130%; background-color: #FFFFFF; text-decoration: none; 
+}
+
+/* Player */
+.emptyPlayer { padding: 2px; min-height: 65px; }
+
+.player { margin: 0 0 10px 0; padding: 0 60px 0 107px; height: 65px; }
+.player .label { height: 20px; line-height: 20px; }
+.player .info, .player .profile, .player .thirdColumn { position: relative; float: left; height: 65px; }
+/* Player Info */
+.player .info { width: 100%; }
+/* Player Profile */
+.player .profile { width: 107px; right: 107px; margin-left: -100%; }
+.player .profile .photo, .photo { width: 47px; height: 65px; float: left; }
+.player .profile .team { width: 60px; float: right; }
+/* Player Opponent */
+.player .thirdColumn { margin-right: -60px; }
+
+		/* Player Small */
+		.playerSmall { margin: 10px auto; width: 107px; }		
+		.playerSmall .team { position: relative; float: left; width: 60px; height: 65px; }
+		.playerSmall .photo { position: relative; float: left; width: 47px !important; height: 65px; }
+		.playerSmall .label { height: 20px; line-height: 20px; }		
+	
+
+
+/* News Profile */
+.newsProfile { margin: 0 0 10px 0; padding: 0 0 0 107px; list-style: none; height: 65px; }
+.newsProfile li { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 65px; }
+.newsProfile li.name { width: 100%; }
+.newsProfile li.name ul, .newsProfile li.name ul li { margin: 0; padding: 0; border: 0; display: block; float: none; list-style: none; height: auto; }
+.newsProfile li.name ul li { padding: 2px 10px; }
+.newsProfile li.news { background-color: #fff; float: none; clear: both; margin: 10px 0; padding: 10px 10px 10px -97px; }
+.newsProfile li.player { width: 107px; right: 107px; margin-left: -100%; }
+.newsProfile li.player ul { margin: 0; padding: 0; list-style: none; }
+.newsProfile li.player ul li.teamAndPos { width: 60px; height: 65px; }
+.newsProfile .position, .newsProfile .oppRank { width: 60px; height: 20px; line-height: 20px; }
+.newsProfile li.player ul li img, .newsProfile li.player ul li.photo { width: 47px; height: 65px; }
+
+div.news .article { background-color: #f5f5f5; margin: 10px 0; padding: 2px 10px; }
+
+/* Player Rank */
+.playerRank { margin: 0 0 10px 0; padding: 0 120px 0 60px; list-style: none; height: 45px; }
+.playerRank li, .playerRank li b { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 45px; line-height: 45px; }
+.playerRank li.name { width: 100%; }
+.playerRank li.name a { display: block; padding-left: 10px; }
+.playerRank li.team { margin-right: -120px; }
+.playerRank li.team .playerRole { margin: 0; padding: 0; list-style: none; }
+.playerRank li.team .playerRole li { width: 60px; }
+.playerRank li.pick { width: 60px; right: 60px; margin-left: -100%; }
+
+/* Owner Select */
+.ownerSelect { margin: 0 0 10px 0; padding: 0; list-style: none; }
+.ownerSelect li { margin: 0 0 -1px 0; padding: 0; border: 1px solid #999; display: block; background-color: #fff; }
+.ownerSelect .info { width: 100%; padding: 10px 0 10px 10px; margin-right: -130px; float: left; line-height: 150%; }
+.ownerSelect .photo { width: 120px; float: left; }
+.ownerSelect .photo img { width: 120px; height: 102px; border: 0; }
+
+/* Draft Select */
+.draftSelect { margin: 0 auto 10px auto; padding: 0; }
+/* border: 1px solid #999; display: block; background-color: #fff;  */
+.draftSelect .photo { width: 120px; }
+.draftSelect .photo img { width: 120px; height: 102px; border: 0; display: block; }
+
+/* Specialty Tags */
+.nameTag 
+{ 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#b0bdcd), to(#7d8da4)); 
+	background: -moz-linear-gradient(top,  #b0bdcd,  #7d8da4);
+	color: #fff; font-weight: bold;
+	text-shadow: -0.1em 0.1em 0.1em #6b788c;
+	padding: 2px 10px;
+}
+
+table.stats { width: 100%; margin: 0; padding: 0; border: none; font-size: .8em; color: #666; border-spacing: 0; border-collapse: collapse; }
+table.stats th { background-color: #ddd; font-weight: normal; padding: 2px 6px; }
+table.stats td { padding: 2px 6px; text-align: center; }
+
+.ownerImage { width: 120px; height: 102px; border: 0; }
+
+

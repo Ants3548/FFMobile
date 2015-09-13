@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Choose Your League";
+}
+
+<div data-role="page">
+  <div data-role="header">
+    <h1>@ViewBag.Title</h1>
+  </div>
+  <div data-role="content">
+    @using (Html.BeginForm("EspnPost", "Login", FormMethod.Post, new { data_ajax = "false" }))
+    {
+      @Html.Action("_Leagues", "Espn")
+    }    
+  </div>
+</div>

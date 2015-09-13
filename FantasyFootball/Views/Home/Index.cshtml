@@ -1,0 +1,40 @@
+﻿@model List<FantasyFootball.Models.League>
+@{
+  ViewBag.Title = "Home";
+}
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('a', '.panel-menu').height($('a:first', '.panel-menu').width());
+  });
+</script>
+
+<style type="text/css">
+  ul.panel-menu { list-style: none; margin: 1em 0; padding: 0; }
+  ul.panel-menu li { width: 23%; min-height: 200px; margin: 2%; display: block; float: left; }
+  ul.panel-menu li a { display: block; color: #fff !important; text-shadow: #666 -1px 1px 2px; text-decoration: none; }
+</style>
+
+<div data-role="page">
+  <div data-role="header">
+    <h1>@ViewBag.Title</h1>
+  </div>
+  <div data-role="content">
+    <ul class="panel-menu">
+      <li>@Html.ActionLink("CBS Rankings", "DraftStandard", "Rankings", null, new {Class="gdBlue txWhite txCenter roundTopL roundBottomL roundTopR roundBottomR", data_ajax="false"})</li>
+      <li>@Html.ActionLink("ESPN Login", "Espn", "Login", null, new {Class="gdBlue txWhite txCenter roundTopL roundBottomL roundTopR roundBottomR", data_ajax="false"})</li>
+		<li>@Html.ActionLink("Yahoo! Login", "Index", "Yahoo", null, new { Class = "gdBlue txWhite txCenter roundTopL roundBottomL roundTopR roundBottomR", data_ajax = "false" })</li>
+    </ul>
+    @*<ul data-role="listview" data-inset="true">
+            @{
+                if (Model != null)
+                {
+                    foreach (FantasyFootball.Models.League League in Model)
+                    {
+                        <li><a href="@League.LeagueId">@League.TeamName</a></li>
+                    }
+                }                
+            }
+        </ul>*@
+  </div>
+</div>

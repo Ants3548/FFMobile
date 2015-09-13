@@ -1,0 +1,94 @@
+﻿@charset "utf-8";
+
+/* Least important first! (Inheritance) */
+@import "/css/styles.css";
+@import "/css/colors.css";
+
+@import "/css/320/icons.css";
+@import "/css/320/corners.css";
+
+@import "/css/page.css";
+@import "/css/forms.css";
+
+body { background-color: #ddd; color: #333; font-family: Helvetica, Verdana, sans-serif; font-size: 80%; margin: 0; padding: 0; }
+
+/* Item Menu */
+ul.menu { list-style: none; margin: 10px; padding: 0; }
+ul.menu li a
+{
+	margin-bottom: -1px; padding: 12px 10px; border: 1px solid #999;
+	display: block; 	
+	font-size: 130%; background-color: #FFFFFF; text-decoration: none; 
+}
+ul.menu li a em { font-size: 80%; color: #333; }
+
+/* Item List */
+ul.options { list-style: none; margin: 10px; padding: 0; }
+ul.options li
+{
+	margin-bottom: -1px; padding: 12px 10px; border: 1px solid #999;
+	display: block; 	
+	font-size: 130%; background-color: #FFFFFF; text-decoration: none; 
+}
+
+/* Player */
+.emptyPlayer { padding: 2px; min-height: 50px; }
+
+.player { margin: 0 0 10px 0; padding: 0 40px 0 76px; height: 50px; }
+.player .label { height: 20px; line-height: 20px; }
+.player .info, .player .profile, .player .thirdColumn { position: relative; float: left; height: 50px; }
+/* Player Info */
+.player .info { width: 100%; }
+/* Player Profile */
+.player .profile { width: 76px; right: 76px; margin-left: -100%; }
+.player .profile .photo, .photo { width: 36px; height: 50px; float: left; }
+.player .profile .team { width: 40px; float: right; }
+/* Player Opponent */
+.player .thirdColumn { margin-right: -40px; }
+
+
+/* News Profile */
+.newsProfile { margin: 0 0 10px 0; padding: 0 0 0 76px; list-style: none; height: 50px; }
+.newsProfile li { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 50px; }
+.newsProfile li.name { background-color: #fff; width: 100%; }
+.newsProfile li.name ul, .newsProfile li.name ul li { margin: 0; padding: 0; border: 0; display: block; float: none; list-style: none; height: auto; }
+.newsProfile li.name ul li { padding: 2px 6px; }
+.newsProfile li.player { width: 76px; right: 76px; margin-left: -100%; }
+.newsProfile li.player ul { margin: 0; padding: 0; list-style: none; }
+.newsProfile li.player ul li.teamAndPos { width: 40px; height: 50px; background-color: #000; color: #fff; text-align: center; font-weight: bold; }
+.newsProfile .position, .newsProfile .oppRank { width: 40px; height: 20px; line-height: 20px; }
+.newsProfile li.player ul li img, .newsProfile li.player ul li.photo { width: 36px; height: 50px; }
+
+div.news .article { background-color: #f5f5f5; margin: 10px 0; padding: 2px 10px; }
+
+/* Player Rank */
+.playerRank { margin: 0 0 10px 0; padding: 0 80px 0 40px; list-style: none; height: 30px; }
+.playerRank li, .playerRank li b { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 30px; line-height: 30px; }
+.playerRank li.name { background-color: #fff; width: 100%; }
+.playerRank li.name a { display: block; padding-left: 10px; text-decoration: none; }
+.playerRank li.team { margin-right: -80px; }
+.playerRank li.team .playerRole { margin: 0; padding: 0; list-style: none; }
+.playerRank li.team .playerRole li { width: 40px; text-align: center; font-weight: bold; }
+.playerRank li.pick { width: 40px; right: 40px; margin-left: -100%; background-color: #000; color: #fff; text-align: center; font-weight: bold; }
+
+/* Owner Select */
+.ownerSelect { margin: 0 0 10px 0; padding: 0; list-style: none; }
+.ownerSelect li { margin: 0 0 -1px 0; padding: 0; border: 1px solid #999; display: block; background-color: #fff; }
+.ownerSelect .info { width: 100%; padding: 10px 0 10px 10px; margin-right: -90px; float: left; line-height: 150%; }
+.ownerSelect .photo { width: 80px; float: left; }
+.ownerSelect .photo img { width: 80px; height: 68px; border: 0; }
+
+/* Specialty Tags */
+.nameTag 
+{ 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#b0bdcd), to(#7d8da4)); 
+	background: -moz-linear-gradient(top,  #b0bdcd,  #7d8da4);
+	color: #fff; font-weight: bold;
+	text-shadow: -0.1em 0.1em 0.1em #6b788c;
+	padding: 1px 6px;
+}
+
+table.stats { width: 100%; margin: 0; padding: 0; border: none; font-size: .8em; color: #666; border-spacing: 0; border-collapse: collapse; }
+table.stats th { background-color: #ddd; font-weight: normal; padding: 1px 4px; }
+table.stats td { padding: 1px 4px; text-align: center; }
+

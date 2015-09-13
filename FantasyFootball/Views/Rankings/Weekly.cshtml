@@ -1,0 +1,113 @@
+﻿@model List<FantasyFootball.Models.RankingsPost>
+@{
+    ViewBag.Title = "Weekly Rankings";
+    String[] Positions = new String[] { "QB", "RB", "WR", "TE", "K", "DST" };
+}
+
+@section HeadCSS
+{
+    @*@if ((decimal)Session["pxRatio"] != null)
+    {
+        if ((decimal)Session["pxRatio"] == 1.5m)
+        {      
+        <style type="text/css">
+            .playerRank { padding: 0 60px 0 120px; }
+            .playerRank li.pick { width: 120px; right: 120px; }
+            .playerRank li.team { margin-right: -60px; }
+            .playerRole { list-style: none; margin: 0; padding: 0; }
+        </style>
+        }
+        else
+        {
+        <style type="text/css">
+            .playerRank { padding: 0 40px 0 80px; }
+            .playerRank li.pick { width: 80px; right: 80px; }
+            .playerRank li.team { margin-right: -40px; }
+            .playerRole { list-style: none; margin: 0; padding: 0; }
+        </style>
+        }
+    }
+    else
+    {*@
+        <style type="text/css">
+            .playerRank { padding: 0 40px 0 80px; }
+            .playerRank li.pick { width: 80px; right: 80px; }
+            .playerRank li.team { margin-right: -40px; }
+            .playerRole { list-style: none; margin: 0; padding: 0; }
+        </style>
+    @*}*@
+
+    <style type="text/css">
+        .gdWhite {
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f5f5f5));
+            background: -moz-linear-gradient(top, #ffffff, #f5f5f5);
+        }
+
+        .ui-body-c, .ui-overlay-c {
+            border: 1px solid #aaa;
+            color: #333;
+            text-shadow: 0 1px 0 #fff;
+            background: none;
+            background-image: none;
+        }
+
+        .ui-content {
+            background-color: #ebebeb;
+        }
+
+        .teamIcon {
+            Text-shadow: none;
+        }
+    </style>
+}
+
+@foreach (string myPosition in Positions)
+{
+    <div data-role="page" id="@myPosition-page">
+        <div data-role="header">
+            <h1>@myPosition Rankings</h1>
+        </div>
+        <div data-role="content">
+            @foreach (FantasyFootball.Models.RankingsPost Author in Model)
+            {
+                <p style="text-align: center;">
+                    <img src="@Author.Thumbnail" title="@Author.Author" alt="@Author.Author" /><br />
+                    @Author.Author
+                    <br />@Author.TimeStamp
+                </p>
+                foreach (FantasyFootball.Models.Ranking Player in Author.Rankings)
+                {
+                    if (Player.Position == myPosition)
+                    {
+                <ul class="playerRank">
+                    <li class="name gdWhite"><a class="ui-link">@Player.Name@((Player.Position == "DST") ? " D/ST" : "")</a></li>
+                    <li class="pick roundTopL roundBottomL">
+                        <ul class="playerRole">
+                            <li class="teamIcon gdBlack txWhite txCenter roundTopL roundBottomL">@Player.Rank</li>
+                            <li class="teamIcon smIco_@Player.Team.ToLower()"></li>
+                        </ul>
+                    </li>
+                    <li class="team roundTopR roundBottomR teamIcon smIco_@Player.Opponent.ToLower()"></li>
+                </ul>
+                    }
+                }
+            }
+        </div>
+        <div data-role="footer" data-id="footer-nav" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    @for (int i = 0; i < 3; i++)
+                    {
+                        <li><a href="#@Positions[i]-page" class="@((Positions[i] == myPosition) ? "ui-btn-active ui-state-persist" : string.Empty)">@Positions[i]</a></li>
+                    }
+                </ul>
+                <ul>
+                    @for (int i = 3; i < 6; i++)
+                    {
+                        <li><a href="#@Positions[i]-page" class="@((Positions[i] == myPosition) ? "ui-btn-active ui-state-persist" : string.Empty)">@Positions[i]</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div> 
+}

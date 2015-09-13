@@ -1,0 +1,27 @@
+﻿@model List<FantasyFootball.Models.League>
+@{
+	ViewBag.Title = "Choose ESPN League";
+}
+
+<div data-role="page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+	</div>
+	<div data-role="content">
+		<ul data-role="listview" data-inset="true">
+			@{if (Model != null)
+				{
+					foreach (FantasyFootball.Models.League League in Model)
+					{
+						<li>
+							<a href="index.html">
+								<h2>@League.TeamName</h2>
+								<p>@League.LeagueName</p>
+							</a>
+						</li>
+					}
+				}
+			}
+		</ul>
+	</div>
+</div>

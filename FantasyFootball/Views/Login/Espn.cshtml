@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "ESPN Login";
+}
+
+<div data-role="page">
+    <div data-role="header">
+        <h1>@ViewBag.Title</h1>
+    </div>
+    <div data-role="content">
+        @using (Html.BeginForm("EspnPost", "Login", FormMethod.Post, new { data_ajax = "false" }))
+        {
+            <fieldset>
+                @Html.Label("username", "User Name:")
+                @Html.TextBox("username")
+
+                @Html.Label("password", "Password:")
+                @Html.Password("password")
+
+                <p align="center"><input type="submit" value="Sign In" data-inline="true" data-theme="b" /></p>
+            </fieldset>
+        }
+    </div>
+</div>

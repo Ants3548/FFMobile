@@ -1,0 +1,40 @@
+﻿@model List<FantasyFootball.Models.Player>
+
+<div data-role="page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Shared/Yahoo/_Menu.cshtml")
+	</div>
+	<div data-role="content">
+		@{if (Model != null)
+			{
+				<h3 class="ui-bar ui-bar-a ui-corner-all">Heading</h3>
+				foreach (FantasyFootball.Models.Player Player in Model)
+				{
+					<div style="margin-bottom: 0.5em; background-color: #fff; border: solid 1px #ddd;" class="roundTopL roundBottomL roundTopR roundBottomR">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td width="35px">
+									<img src="http://sports.cbsimg.net/images/football/nfl/players/60x80/@string.Format("{0}.jpg", Player.PlayerAltId)" class="roundTopL roundBottomL" style="height: 46px; width: auto; display: block" />
+								</td>
+								<td width="40px">
+									<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Team.ToLower())" width="40" height="30" /></div>
+									<div class="gdBlack txWhite txBold txCenter">@Player.Position</div>
+								</td>
+								<td style="padding: 3px 10px;">
+                                    <b>@Player.Name</b><br />@Player.Note01
+								</td>
+                                <td width="40px">
+									<div class="teamIcon roundTopR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Opponent.ToLower())" width="40" height="30" class="roundTopR" /></div>
+									<div class="gdBlack txWhite txBold txCenter roundBottomR">&nbsp;</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				}
+			}
+		}
+	</div>
+</div>
+
+

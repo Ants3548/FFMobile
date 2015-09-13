@@ -1,0 +1,46 @@
+﻿@charset "utf-8";
+
+/* Team Small Icons */
+.teamIcon { width: 60px; height: 45px; border: 0; }
+
+.smIco_fa { background-image: url(/Content/images/icons/teams/60x45/fa.jpg); }
+
+.smIco_pit { background-image: url(/Content/images/icons/teams/60x45/pit.jpg); }
+.smIco_cin { background-image: url(/Content/images/icons/teams/60x45/cin.jpg); }
+.smIco_bal { background-image: url(/Content/images/icons/teams/60x45/bal.jpg); }
+.smIco_cle { background-image: url(/Content/images/icons/teams/60x45/cle.jpg); }
+
+.smIco_ind { background-image: url(/Content/images/icons/teams/60x45/ind.jpg); }
+.smIco_ten { background-image: url(/Content/images/icons/teams/60x45/ten.jpg); }
+.smIco_jac { background-image: url(/Content/images/icons/teams/60x45/jac.jpg); }
+.smIco_hou { background-image: url(/Content/images/icons/teams/60x45/hou.jpg); }
+
+.smIco_ne { background-image: url(/Content/images/icons/teams/60x45/ne.jpg); }
+.smIco_nyj { background-image: url(/Content/images/icons/teams/60x45/nyj.jpg); }
+.smIco_mia { background-image: url(/Content/images/icons/teams/60x45/mia.jpg); }
+.smIco_buf { background-image: url(/Content/images/icons/teams/60x45/buf.jpg); }
+
+.smIco_sd { background-image: url(/Content/images/icons/teams/60x45/sd.jpg); }
+.smIco_oak { background-image: url(/Content/images/icons/teams/60x45/oak.jpg); }
+.smIco_den { background-image: url(/Content/images/icons/teams/60x45/den.jpg); }
+.smIco_kc { background-image: url(/Content/images/icons/teams/60x45/kc.jpg); }
+
+.smIco_gb { background-image: url(/Content/images/icons/teams/60x45/gb.jpg); }
+.smIco_det { background-image: url(/Content/images/icons/teams/60x45/det.jpg); }
+.smIco_chi { background-image: url(/Content/images/icons/teams/60x45/chi.jpg); }
+.smIco_min { background-image: url(/Content/images/icons/teams/60x45/min.jpg); }
+
+.smIco_tb { background-image: url(/Content/images/icons/teams/60x45/tb.jpg); }
+.smIco_no { background-image: url(/Content/images/icons/teams/60x45/no.jpg); }
+.smIco_atl { background-image: url(/Content/images/icons/teams/60x45/atl.jpg); }
+.smIco_car { background-image: url(/Content/images/icons/teams/60x45/car.jpg); }
+
+.smIco_nyg { background-image: url(/Content/images/icons/teams/60x45/nyg.jpg); }
+.smIco_was { background-image: url(/Content/images/icons/teams/60x45/was.jpg); }
+.smIco_phi { background-image: url(/Content/images/icons/teams/60x45/phi.jpg); }
+.smIco_dal { background-image: url(/Content/images/icons/teams/60x45/dal.jpg); }
+
+.smIco_ari { background-image: url(/Content/images/icons/teams/60x45/ari.jpg); }
+.smIco_stl { background-image: url(/Content/images/icons/teams/60x45/stl.jpg); }
+.smIco_sea { background-image: url(/Content/images/icons/teams/60x45/sea.jpg); }
+.smIco_sf { background-image: url(/Content/images/icons/teams/60x45/sf.jpg); }

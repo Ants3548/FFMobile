@@ -1,0 +1,22 @@
+﻿@model List<FantasyFootball.Models.Owner>
+
+<div data-role="page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Shared/Yahoo/_Menu.cshtml")
+	</div>
+	<div data-role="content">
+		@{if (Model != null)
+			{
+				<ul data-role="listview" data-inset="true">
+					@foreach (FantasyFootball.Models.Owner Owner in Model)
+					{
+						<li><a href="@Url.Action("Team", "Yahoo", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId, teamId = Owner.Id }))" data-ajax="false">@Owner.TeamName</a></li>
+					}
+				</ul>				
+			}
+		}
+	</div>
+</div>
+
+

@@ -1,0 +1,17 @@
+﻿@charset "utf-8";
+
+/* CSS Styles */
+.noUnderline { text-decoration: none; }
+
+/* Font Styles */
+.txBold { font-weight: bold; }
+.txCenter { text-align: center; }
+
+/* Floats */
+.floatLeft { float: left; }
+.floatRight { float: right; }
+.clear { clear: both; float: none; }
+
+/* Misc */
+.hidden { display: none; }
+.invisible { visibility: hidden; }

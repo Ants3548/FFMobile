@@ -1,0 +1,10 @@
+﻿@charset "utf-8";
+
+.ui-header .ui-title
+{
+	margin: 0; padding: 0.5em 0; display: block;
+	border-top: 1px solid #c9d5e1; border-bottom: 1px solid #223345;
+	font-size: 1.3em; color: #fff; text-align: center; text-shadow: -0.1em 0.1em 0.1em #6b788c;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#b0bdcd), to(#7d8da4)); 
+	background: -moz-linear-gradient(top,  #b0bdcd,  #7d8da4); 
+}

@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "PPR Rankings";
+}
+
+@section HeadCSS
+{
+    <link href="~/Content/colors.css" rel="stylesheet" />
+    <link href="~/Content/corners.css" rel="stylesheet" />
+    <link href="~/Content/icons.css" rel="stylesheet" />
+    <link href="~/Content/mobile.css" rel="stylesheet" />
+}
+
+<div data-role="page"> 
+	<div data-role="header">
+        <h1>@ViewBag.Title</h1>
+	</div> 
+	<div data-role="content">
+        @foreach (FantasyFootball.Models.Ranking Rank in Model)
+        {
+            <ul class="playerRank">
+                <li class="name gdWhite"><a class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</a></li>
+                <li class="pick gdBlack txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+                <li class="team">
+                    <ul class="playerRole">
+                        <li class="teamIcon smIco_@Rank.Team.ToLower()"></li>
+                        <li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
+                    </ul>
+                </li>
+            </ul>
+        }
+	</div> 
+</div> 

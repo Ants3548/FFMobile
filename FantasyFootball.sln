@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FantasyFootball", "FantasyF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FantasyFootball.Common", "FantasyFootball.Common\FantasyFootball.Common.csproj", "{A6F60D49-20E5-420A-BAFB-A703DDFBE931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FantasyFootballMobile.DAL", "FantasyFootballMobile.DAL\FantasyFootballMobile.DAL.csproj", "{79A92BE5-BE0E-4224-B728-305A9C691042}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FantasyFootball.DAL", "FantasyFootballMobile.DAL\FantasyFootball.DAL.csproj", "{79A92BE5-BE0E-4224-B728-305A9C691042}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

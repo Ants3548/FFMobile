@@ -78,7 +78,7 @@ namespace FantasyFootball.Controllers
 				}
 				else
 				{
-					return View();
+					return RedirectToAction("Yahoo", "Login");
 				}
 
 
@@ -89,7 +89,7 @@ namespace FantasyFootball.Controllers
 			}
 			else
 			{
-				return View();
+				return RedirectToAction("Yahoo", "Login");
 			}
 
 		}

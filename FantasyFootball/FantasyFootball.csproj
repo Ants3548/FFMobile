@@ -317,9 +317,9 @@
       <Project>{a6f60d49-20e5-420a-bafb-a703ddfbe931}</Project>
       <Name>FantasyFootball.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FantasyFootballMobile.DAL\FantasyFootballMobile.DAL.csproj">
+    <ProjectReference Include="..\FantasyFootballMobile.DAL\FantasyFootball.DAL.csproj">
       <Project>{79a92be5-be0e-4224-b728-305a9c691042}</Project>
-      <Name>FantasyFootballMobile.DAL</Name>
+      <Name>FantasyFootball.DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

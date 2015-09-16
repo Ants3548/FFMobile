@@ -70,6 +70,34 @@ namespace FantasyFootball.Controllers
 			return View(myTransactions);
 		}
 
+		public ActionResult WeeklyRankingsPPR()
+		{
+			List<string> playerYahooIds = new List<string>(), playerCbsIds = new List<string>();
+			if (Session["yahoo"] != null)
+			{
+				string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/starters", Request.Params["leagueId"]), (string)Session["yahoo"]);
+				MatchCollection players = Regex.Matches(html, @"(?i)/nfl/players/(?<PlayerId>\d+)""", RegexOptions.Singleline);
+				if (players.Count > 0)
+				{
+					foreach (Match player in players)
+					{
+						playerYahooIds.Add(player.Groups["PlayerId"].Value);
+					}
+
+					using (FantasyFootballEntities db = new FantasyFootballEntities())
+					{
+						playerCbsIds = db.tbl_ff_players.Where(x => playerYahooIds.Contains(x.Yahoo) && x.Cbs != null).Select(s => s.Cbs).ToList();
+					}
+				}
+			}
+
+			Dictionary<string, List<FantasyFootball.Models.Ranking>> rankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);					
+
+			ViewBag.Title = "Weekly PPR Rankings";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			return View(rankings);
+		}
+
 		protected List<League> GetLeagues()
 		{
 			string html = Functions.GetHttpHtml("https://football.fantasysports.yahoo.com/", (string)Session["yahoo"]);
@@ -138,14 +166,16 @@ namespace FantasyFootball.Controllers
 			}
 
 			//Get the CBS images for the players
-			FantasyFootballEntities db = new FantasyFootballEntities();
-			List<String> yahooIdList = (from p in myPlayers select p.PlayerId).ToList();
-			List<tbl_ff_players> playerEntityList = db.tbl_ff_players.Where(x => yahooIdList.Contains(x.Yahoo) && x.Cbs != null).ToList();
-			foreach(tbl_ff_players entityPlayer in playerEntityList)
+			using(FantasyFootballEntities db = new FantasyFootballEntities())
 			{
-				Player yahooPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Yahoo select p).FirstOrDefault();
-				yahooPlayer.PlayerAltId = entityPlayer.Cbs;
-			}
+				List<string> yahooIdList = (from p in myPlayers select p.PlayerId).ToList();
+				List<tbl_ff_players> playerEntityList = db.tbl_ff_players.Where(x => yahooIdList.Contains(x.Yahoo) && x.Cbs != null).ToList();
+				foreach (tbl_ff_players entityPlayer in playerEntityList)
+				{
+					Player yahooPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Yahoo select p).FirstOrDefault();
+					yahooPlayer.PlayerAltId = entityPlayer.Cbs;
+				}
+			}			
 
 			return myPlayers;
 		}

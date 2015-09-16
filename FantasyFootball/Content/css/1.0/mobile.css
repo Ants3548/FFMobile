@@ -64,11 +64,21 @@ ul.options li
 
 div.news .article { background-color: #f5f5f5; margin: 10px 0; padding: 2px 10px; }
 
+/* Small Player Rank */
+.sm-playerRank { margin: 0.5em 0; padding: 0 40px 0 80px; list-style: none; height: 30px; text-shadow: none; }
+.sm-playerRank li, .playerRank li b { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 30px; line-height: 30px; }
+.sm-playerRank li.name { background-color: #fff; width: 100%; }
+.sm-playerRank li.name a, .sm-playerRank li.name b { display: block; padding-left: 10px; text-decoration: none; line-height: 28px; border-top: solid 1px #eee; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-playerRank li.opponent { width: 40px; margin-right: -40px; }
+.sm-playerRank .playerRole { margin: 0; padding: 0; list-style: none; }
+.sm-playerRank .playerRole li { width: 40px; }
+.sm-playerRank li.pick { width: 80px; right: 80px; margin-left: -100%; color: #fff; text-align: center; font-weight: bold; }
+
 /* Player Rank */
 .playerRank { margin: 0 0 10px 0; padding: 0 80px 0 40px; list-style: none; height: 30px; }
 .playerRank li, .playerRank li b { margin: 0; padding: 0; border: 0; display: block; position: relative; float: left; height: 30px; line-height: 30px; }
 .playerRank li.name { background-color: #fff; width: 100%; }
-.playerRank li.name a, .playerRank li.name b { display: block; padding-left: 10px; text-decoration: none; border-top: solid 1px #eee; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.playerRank li.name a, .playerRank li.name b { display: block; padding-left: 10px; text-decoration: none; line-height: 28px; border-top: solid 1px #eee; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .playerRank li.team { margin-right: -80px; }
 .playerRank li.team .playerRole { margin: 0; padding: 0; list-style: none; }
 .playerRank li.team .playerRole li { width: 40px; }

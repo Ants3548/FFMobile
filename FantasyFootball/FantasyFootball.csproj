@@ -257,6 +257,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CbsController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\EspnController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -301,6 +302,8 @@
     <Content Include="Views\Shared\Yahoo\_Menu.cshtml" />
     <Content Include="Views\Yahoo\Transactions.cshtml" />
     <Content Include="Views\Yahoo\Teams.cshtml" />
+    <Content Include="Views\Yahoo\WeeklyRankingsPPR.cshtml" />
+    <Content Include="Views\Yahoo\_RankingsFooter.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -311,6 +314,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\players\" />
+    <Folder Include="Views\Cbs\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FantasyFootball.Common\FantasyFootball.Common.csproj">

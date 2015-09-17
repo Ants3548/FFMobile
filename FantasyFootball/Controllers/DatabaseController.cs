@@ -53,7 +53,7 @@ namespace FantasyFootball.Controllers
 							foreach (Match player in myPlayers)
 							{
 								string CbsId = Regex.Replace(player.Groups["CbsId"].Value, @"\D", string.Empty);
-								string[] Name = player.Groups["PlayerName"].Value.Split(new char[] { ',' });
+								string[] Name = player.Groups["PlayerName"].Value.Replace(" (IR)", string.Empty).Split(new char[] { ',' });
 
 								tbl_ff_players playerObj = db.tbl_ff_players.FirstOrDefault(x => x.Cbs == CbsId);
 								if (playerObj != null)
@@ -373,38 +373,38 @@ namespace FantasyFootball.Controllers
 			return View();
 		}
 
-		public ActionResult FFToolboxSchedule()
-		{
-			string html = System.IO.File.ReadAllText(Server.MapPath(@"~/2013-schedule.html"));
-			MatchCollection myTeams = Regex.Matches(html, @"<tr>(?<myTds>.*?)</tr>", RegexOptions.Singleline);
+		//public ActionResult FFToolboxSchedule()
+		//{
+		//	string html = System.IO.File.ReadAllText(Server.MapPath(@"~/2013-schedule.html"));
+		//	MatchCollection myTeams = Regex.Matches(html, @"<tr>(?<myTds>.*?)</tr>", RegexOptions.Singleline);
 
-			if (myTeams.Count > 0)
-			{
-				FantasyFootballEntities db = new FantasyFootballEntities();
-				foreach (Match myTeam in myTeams)
-				{
-					MatchCollection myTds = Regex.Matches(myTeam.Value, @"<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
-					if (myTds.Count > 0)
-					{
-						Match myTeamName = Regex.Match(myTds[0].Value, @"<a[^>]+>(?<Team>.*?)</a>", RegexOptions.Singleline);
-						for (int j = 1; j < myTds.Count; j++)
-						{
-							db.tbl_ff_matchups_2013.Add(new tbl_ff_matchups_2013()
-							{
-								Team = myTeamName.Groups["Team"].Value,
-								Week = j,
-								Opponent = myTds[j].Groups["Content"].Value.Replace("@", string.Empty),
-								IsHome = (!myTds[j].Value.Contains("@")),
-								IsBye = (myTds[j].Groups["Content"].Value == "BYE")
-							});
-						}
-					}
-				}
-				db.SaveChanges();
-			}
+		//	if (myTeams.Count > 0)
+		//	{
+		//		FantasyFootballEntities db = new FantasyFootballEntities();
+		//		foreach (Match myTeam in myTeams)
+		//		{
+		//			MatchCollection myTds = Regex.Matches(myTeam.Value, @"<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+		//			if (myTds.Count > 0)
+		//			{
+		//				Match myTeamName = Regex.Match(myTds[0].Value, @"<a[^>]+>(?<Team>.*?)</a>", RegexOptions.Singleline);
+		//				for (int j = 1; j < myTds.Count; j++)
+		//				{
+		//					db.tbl_ff_matchups_2013.Add(new tbl_ff_matchups_2013()
+		//					{
+		//						Team = myTeamName.Groups["Team"].Value,
+		//						Week = j,
+		//						Opponent = myTds[j].Groups["Content"].Value.Replace("@", string.Empty),
+		//						IsHome = (!myTds[j].Value.Contains("@")),
+		//						IsBye = (myTds[j].Groups["Content"].Value == "BYE")
+		//					});
+		//				}
+		//			}
+		//		}
+		//		db.SaveChanges();
+		//	}
 
-			return View();
-		}
+		//	return View();
+		//}
 
 	}
 }

@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="FantasyFootballModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="tbl_ff_players">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Position" Type="varchar" MaxLength="50" />
+          <Property Name="Team" Type="varchar" MaxLength="50" />
+          <Property Name="JerseyNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Espn" Type="varchar" MaxLength="50" />
+          <Property Name="Cbs" Type="varchar" MaxLength="50" />
+          <Property Name="Nfl" Type="varchar" MaxLength="50" />
+          <Property Name="Roto" Type="varchar" MaxLength="50" />
+          <Property Name="Yahoo" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tbl_ff_stats_weekly_players">
+          <Key>
+            <PropertyRef Name="PlayerStatsWeeklyId" />
+          </Key>
+          <Property Name="PlayerStatsWeeklyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Espn" Type="varchar" MaxLength="50" />
+          <Property Name="Cbs" Type="varchar" MaxLength="50" />
+          <Property Name="Nfl" Type="varchar" MaxLength="50" />
+          <Property Name="Roto" Type="varchar" MaxLength="50" />
+          <Property Name="Yahoo" Type="varchar" MaxLength="50" />
+          <Property Name="PassAtt" Type="int" />
+          <Property Name="PassComp" Type="int" />
+          <Property Name="PassYds" Type="int" />
+          <Property Name="PassTDs" Type="int" />
+          <Property Name="PassINTs" Type="int" />
+          <Property Name="Receptions" Type="int" />
+          <Property Name="RecYards" Type="int" />
+          <Property Name="RecTDs" Type="int" />
+          <Property Name="Rushes" Type="int" />
+          <Property Name="RushYds" Type="int" />
+          <Property Name="RushTDs" Type="int" />
+          <Property Name="DefTackles" Type="int" />
+          <Property Name="DefAssists" Type="int" />
+          <Property Name="DefINTs" Type="int" />
+          <Property Name="DefFFs" Type="int" />
+          <Property Name="DefSacks" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Week" Type="int" />
+        </EntityType>
+        <EntityContainer Name="FantasyFootballModelStoreContainer">
+          <EntitySet Name="tbl_ff_players" EntityType="Self.tbl_ff_players" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tbl_ff_stats_weekly_players" EntityType="Self.tbl_ff_stats_weekly_players" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FantasyFootballModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tbl_ff_players">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Position" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Team" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="JerseyNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Espn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Cbs" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Nfl" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Roto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Yahoo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tbl_ff_stats_weekly_players">
+          <Key>
+            <PropertyRef Name="PlayerStatsWeeklyId" />
+          </Key>
+          <Property Name="PlayerStatsWeeklyId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Espn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Cbs" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Nfl" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Roto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Yahoo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PassAtt" Type="Int32" />
+          <Property Name="PassComp" Type="Int32" />
+          <Property Name="PassYds" Type="Int32" />
+          <Property Name="PassTDs" Type="Int32" />
+          <Property Name="PassINTs" Type="Int32" />
+          <Property Name="Receptions" Type="Int32" />
+          <Property Name="RecYards" Type="Int32" />
+          <Property Name="RecTDs" Type="Int32" />
+          <Property Name="Rushes" Type="Int32" />
+          <Property Name="RushYds" Type="Int32" />
+          <Property Name="RushTDs" Type="Int32" />
+          <Property Name="DefTackles" Type="Int32" />
+          <Property Name="DefAssists" Type="Int32" />
+          <Property Name="DefINTs" Type="Int32" />
+          <Property Name="DefFFs" Type="Int32" />
+          <Property Name="DefSacks" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Week" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="FantasyFootballEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tbl_ff_players" EntityType="Self.tbl_ff_players" />
+          <EntitySet Name="tbl_ff_stats_weekly_players" EntityType="Self.tbl_ff_stats_weekly_players" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FantasyFootballModelStoreContainer" CdmEntityContainer="FantasyFootballEntities">
+          <EntitySetMapping Name="tbl_ff_players">
+            <EntityTypeMapping TypeName="FantasyFootballModel.tbl_ff_players">
+              <MappingFragment StoreEntitySet="tbl_ff_players">
+                <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="Team" ColumnName="Team" />
+                <ScalarProperty Name="JerseyNumber" ColumnName="JerseyNumber" />
+                <ScalarProperty Name="Espn" ColumnName="Espn" />
+                <ScalarProperty Name="Cbs" ColumnName="Cbs" />
+                <ScalarProperty Name="Nfl" ColumnName="Nfl" />
+                <ScalarProperty Name="Roto" ColumnName="Roto" />
+                <ScalarProperty Name="Yahoo" ColumnName="Yahoo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tbl_ff_stats_weekly_players">
+            <EntityTypeMapping TypeName="FantasyFootballModel.tbl_ff_stats_weekly_players">
+              <MappingFragment StoreEntitySet="tbl_ff_stats_weekly_players">
+                <ScalarProperty Name="PlayerStatsWeeklyId" ColumnName="PlayerStatsWeeklyId" />
+                <ScalarProperty Name="Espn" ColumnName="Espn" />
+                <ScalarProperty Name="Cbs" ColumnName="Cbs" />
+                <ScalarProperty Name="Nfl" ColumnName="Nfl" />
+                <ScalarProperty Name="Roto" ColumnName="Roto" />
+                <ScalarProperty Name="Yahoo" ColumnName="Yahoo" />
+                <ScalarProperty Name="PassAtt" ColumnName="PassAtt" />
+                <ScalarProperty Name="PassComp" ColumnName="PassComp" />
+                <ScalarProperty Name="PassYds" ColumnName="PassYds" />
+                <ScalarProperty Name="PassTDs" ColumnName="PassTDs" />
+                <ScalarProperty Name="PassINTs" ColumnName="PassINTs" />
+                <ScalarProperty Name="Receptions" ColumnName="Receptions" />
+                <ScalarProperty Name="RecYards" ColumnName="RecYards" />
+                <ScalarProperty Name="RecTDs" ColumnName="RecTDs" />
+                <ScalarProperty Name="Rushes" ColumnName="Rushes" />
+                <ScalarProperty Name="RushYds" ColumnName="RushYds" />
+                <ScalarProperty Name="RushTDs" ColumnName="RushTDs" />
+                <ScalarProperty Name="DefTackles" ColumnName="DefTackles" />
+                <ScalarProperty Name="DefAssists" ColumnName="DefAssists" />
+                <ScalarProperty Name="DefINTs" ColumnName="DefINTs" />
+                <ScalarProperty Name="DefFFs" ColumnName="DefFFs" />
+                <ScalarProperty Name="DefSacks" ColumnName="DefSacks" />
+                <ScalarProperty Name="Week" ColumnName="Week" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

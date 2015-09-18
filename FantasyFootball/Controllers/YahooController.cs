@@ -70,6 +70,21 @@ namespace FantasyFootball.Controllers
 			return View(myTransactions);
 		}
 
+		public ActionResult WaiverWire()
+		{
+			List<Player> myPlayers = new List<Player>();
+
+			if (Session["yahoo"] != null)
+				myPlayers = GetWaivers(Request.Params["leagueId"]);
+			else
+				return RedirectToAction("Yahoo", "Login");
+
+			ViewBag.Title = "Waiver Wire";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			ViewBag.TeamId = Request.Params["teamId"];
+			return View(myPlayers);
+		}
+
 		public ActionResult WeeklyRankingsPPR()
 		{
 			List<string> playerYahooIds = new List<string>(), playerCbsIds = new List<string>();
@@ -176,6 +191,58 @@ namespace FantasyFootball.Controllers
 					yahooPlayer.PlayerAltId = entityPlayer.Cbs;
 				}
 			}			
+
+			return myPlayers;
+		}
+
+		protected List<Player> GetWaivers(string leagueId)
+		{
+			string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/players?&sort=R_PO&sdir=1&status=A", leagueId), (string)Session["yahoo"]);
+			Match htmlMatch = Regex.Match(html, @"(?i)<section[^>]+?id=""players-table-wrapper""[^>]*>.*?</section>", RegexOptions.Singleline);
+			List<Player> myPlayers = new List<Player>();
+			if (htmlMatch.Success)
+			{
+				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>.*?</tr>", RegexOptions.Singleline);
+				if (myTRs.Count > 0)
+				{
+					foreach (Match myTR in myTRs)
+					{
+						MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+						if (myTDs.Count > 0)
+						{
+							Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/players/(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
+							Match opponentMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)ysf-game-status.*?<a\s+[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
+							Match injuryMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)<abbr[^>]*>(?<Content>[^<]+)</abbr>", RegexOptions.Singleline);
+                            if (playerMatch.Success && opponentMatch.Success)
+							{
+								myPlayers.Add(new Player()
+								{
+									PlayerId = playerMatch.Groups["PlayerId"].Value,
+									Name = playerMatch.Groups["PlayerName"].Value 
+									+ string.Format(" {0}", Regex.Replace(myTDs[6].Groups["Content"].Value, @"(?i)<[^>]+>", string.Empty))
+									+ (injuryMatch.Success ? string.Format(" - <span class=\"txRed\">{0}</span>", injuryMatch.Groups["Content"].Value) : string.Empty),
+									Position = playerMatch.Groups["Position"].Value,
+									Team = playerMatch.Groups["Team"].Value.ToLower(),
+									Opponent = Regex.Match(opponentMatch.Groups["Opponent"].Value, @"\w+$", RegexOptions.Singleline).Value.ToLower(),
+									Note01 = Regex.Replace(opponentMatch.Groups["Opponent"].Value, @"\s+(@|vs)\s+\w+$", string.Empty) + " - " + Regex.Replace(myTDs[3].Groups["Content"].Value, @"(?i)<[^>]+>", string.Empty)
+								});
+							}
+						}
+					}
+				}
+			}
+
+			//Get the CBS images for the players
+			using (FantasyFootballEntities db = new FantasyFootballEntities())
+			{
+				List<string> yahooIdList = (from p in myPlayers select p.PlayerId).ToList();
+				List<tbl_ff_players> playerEntityList = db.tbl_ff_players.Where(x => yahooIdList.Contains(x.Yahoo) && x.Cbs != null).ToList();
+				foreach (tbl_ff_players entityPlayer in playerEntityList)
+				{
+					Player yahooPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Yahoo select p).FirstOrDefault();
+					yahooPlayer.PlayerAltId = entityPlayer.Cbs;
+				}
+			}
 
 			return myPlayers;
 		}

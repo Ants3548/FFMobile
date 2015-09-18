@@ -304,6 +304,7 @@
     <Content Include="Views\Yahoo\Teams.cshtml" />
     <Content Include="Views\Yahoo\WeeklyRankingsPPR.cshtml" />
     <Content Include="Views\Yahoo\_RankingsFooter.cshtml" />
+    <Content Include="Views\Yahoo\WaiverWire.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -299,12 +299,14 @@
     <Content Include="Views\Yahoo\Index.cshtml" />
     <Content Include="Views\Yahoo\Team.cshtml" />
     <None Include="Properties\PublishProfiles\Production.pubxml" />
-    <Content Include="Views\Shared\Yahoo\_Menu.cshtml" />
+    <Content Include="Views\Yahoo\_Menu.cshtml" />
     <Content Include="Views\Yahoo\Transactions.cshtml" />
     <Content Include="Views\Yahoo\Teams.cshtml" />
     <Content Include="Views\Yahoo\WeeklyRankingsPPR.cshtml" />
     <Content Include="Views\Yahoo\_RankingsFooter.cshtml" />
     <Content Include="Views\Yahoo\WaiverWire.cshtml" />
+    <Content Include="Views\Espn\Team.cshtml" />
+    <Content Include="Views\Espn\_Menu.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

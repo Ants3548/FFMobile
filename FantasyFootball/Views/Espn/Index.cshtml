@@ -14,7 +14,7 @@
 					foreach (FantasyFootball.Models.League League in Model)
 					{
 						<li>
-							<a href="index.html">
+							<a href="@Url.Action("Team", "Espn", new RouteValueDictionary(new { leagueId = League.LeagueId, teamId = League.TeamId, seasonId = League.Season }))" data-ajax="false">
 								<h2>@League.TeamName</h2>
 								<p>@League.LeagueName</p>
 							</a>

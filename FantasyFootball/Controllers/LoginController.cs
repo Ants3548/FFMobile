@@ -33,59 +33,39 @@ namespace FantasyFootball.Controllers
 		[HttpPost]
 		public ActionResult EspnPost()
 		{
-			StringBuilder PostVars = new StringBuilder();
-			PostVars.Append("username=" + Request.Form["username"]);
-			PostVars.Append("&password=" + Request.Form["password"]);
-			PostVars.Append("&affiliateName=espn_fantgames");
-			PostVars.Append("&registrationFormId=espn_ffl");
-			PostVars.Append("&appRedirect=http://games.espn.go.com/frontpage/football");
-			PostVars.Append("&parentLocation=http://games.espn.go.com/frontpage/football");
-			PostVars.Append("&language=en");
+			string jsonPost = @"{""loginValue"":""" + Request.Form["username"] + @""",""password"":""" + Request.Form["password"] + @"""}";
+			byte[] buffer = Encoding.ASCII.GetBytes(jsonPost.ToString());
 
-			byte[] buffer = Encoding.ASCII.GetBytes(PostVars.ToString());
-			//Initialization, we use localhost, change if applicable
-			HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create("https://r.espn.go.com/members/util/loginUser");
-			//Our method is post, otherwise the buffer (postvars) would be useless
-			WebReq.Method = "POST";
-			//We use form contentType, for the postvars.
-			WebReq.ContentType = "application/x-www-form-urlencoded";
-			//The length of the buffer (postvars) is used as contentlength.
+			HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create("https://registerdisney.go.com/jgc/v2/client/ESPN-FANTASYLM-PROD/guest/login?langPref=en-US");
+			WebReq.Accept = "application/json, text/plain, */*";
 			WebReq.ContentLength = buffer.Length;
-			//We open a stream for writing the postvars
+			WebReq.ContentType = "application/json;charset=UTF-8";
+			WebReq.Host = "registerdisney.go.com";			
+			WebReq.KeepAlive = true;
+			WebReq.Method = "POST";
+			WebReq.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36";
+
 			Stream PostData = WebReq.GetRequestStream();
-			//Now we write, and afterwards, we close. Closing is always important!
 			PostData.Write(buffer, 0, buffer.Length);
 			PostData.Close();
-			//Get the response handle, we have no true response yet!
-			HttpWebResponse WebResp = (HttpWebResponse)WebReq.GetResponse();
-			//Let's show some information about the response
-			//Console.WriteLine(WebResp.StatusCode);
-			//Console.WriteLine(WebResp.Server);
 
-			//Now, we read the response (the string), and output it.
+			HttpWebResponse WebResp = (HttpWebResponse)WebReq.GetResponse();
 			if (WebResp.StatusCode == HttpStatusCode.OK)
 			{
-				if (!string.IsNullOrEmpty(WebResp.Headers["Set-Cookie"]))
-				{
-					MatchCollection myCookies = Regex.Matches(WebResp.Headers["Set-Cookie"], @"(?i)\b[^=]+\b=[^;]*?;", RegexOptions.Singleline);
-					string mySessionVar = string.Empty;
-					foreach (Match myMatch in myCookies)
-						if (!Regex.IsMatch(myMatch.Value, "(?i)^(domain|expires|path)"))
-							mySessionVar += myMatch.Value;
+				Stream jsonResp = WebResp.GetResponseStream();
+				StreamReader _Answer = new StreamReader(jsonResp);
+				string htmlResponse = _Answer.ReadToEnd();
 
-					Session["espn"] = mySessionVar;
+				Match mySwid = Regex.Match(htmlResponse, @"(?i)""swid""\:""\{(?<Swid>[^}]+)\}""", RegexOptions.Singleline);
+				if (mySwid.Success)
+				{
+					Session["espn"] = @"SWID={" + mySwid.Groups["Swid"].Value + @"}; espnAuth={""swid"":""{" + mySwid.Groups["Swid"].Value + @"}""}";
 					return RedirectToAction("Index", "Espn"); //("~/Views/Home/Index.cshtml");
 				}
 				else
 				{
 					return RedirectToAction("Espn", "Login");
 				}
-
-
-				//Stream Answer = WebResp.GetResponseStream();
-				//StreamReader _Answer = new StreamReader(Answer);
-				//string html = _Answer.ReadToEnd();
-				//Console.WriteLine(_Answer.ReadToEnd());
 			}
 			else
 			{

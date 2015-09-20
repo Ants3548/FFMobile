@@ -1,0 +1,186 @@
+﻿@model Dictionary<string, List<FantasyFootball.Models.Ranking>>
+
+<div data-role="page" id="qb-page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Espn/_Menu.cshtml")
+	</div>
+	<div role="main" class="ui-content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Ranking Rank in Model["Quarterbacks"])
+				{
+					<ul class="sm-playerRank">
+						<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
+						<li class="pick">
+							<ul class="playerRole">
+								<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+								<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>								
+							</ul>
+						</li>
+						<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
+					</ul>
+				}
+			}
+		}
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar" class="ui-state-persist">
+			<ul>
+				<li><a href="#qb-page" class="ui-btn-active">QB</a></li>
+				<li><a href="#rb-page">RB</a></li>
+				<li><a href="#wr-page">WR</a></li>
+				<li><a href="#te-page">TE</a></li>
+				<li><a href="#dst-page">D/ST</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div>
+</div>
+
+<div data-role="page" id="rb-page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Espn/_Menu.cshtml")
+	</div>
+	<div role="main" class="ui-content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Ranking Rank in Model["Running Backs"])
+				{
+					<ul class="sm-playerRank">
+						<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
+						<li class="pick">
+							<ul class="playerRole">
+								<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+								<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+							</ul>
+						</li>
+						<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
+					</ul>
+				}
+			}
+		}
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar" class="ui-state-persist">
+			<ul>
+				<li><a href="#qb-page">QB</a></li>
+				<li><a href="#rb-page" class="ui-btn-active">RB</a></li>
+				<li><a href="#wr-page">WR</a></li>
+				<li><a href="#te-page">TE</a></li>
+				<li><a href="#dst-page">D/ST</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div>
+</div>
+
+<div data-role="page" id="wr-page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Espn/_Menu.cshtml")
+	</div>
+	<div role="main" class="ui-content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Ranking Rank in Model["Wide Receivers"])
+				{
+					<ul class="sm-playerRank">
+						<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
+						<li class="pick">
+							<ul class="playerRole">
+								<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+								<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+							</ul>
+						</li>
+						<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
+					</ul>
+				}
+			}
+		}
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar" class="ui-state-persist">
+			<ul>
+				<li><a href="#qb-page">QB</a></li>
+				<li><a href="#rb-page">RB</a></li>
+				<li><a href="#wr-page" class="ui-btn-active">WR</a></li>
+				<li><a href="#te-page">TE</a></li>
+				<li><a href="#dst-page">D/ST</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div>
+</div>
+
+<div data-role="page" id="te-page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Espn/_Menu.cshtml")
+	</div>
+	<div role="main" class="ui-content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Ranking Rank in Model["Tight Ends"])
+				{
+					<ul class="sm-playerRank">
+						<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
+						<li class="pick">
+							<ul class="playerRole">
+								<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+								<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+							</ul>
+						</li>
+						<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
+					</ul>
+				}
+			}
+		}
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar" class="ui-state-persist">
+			<ul>
+				<li><a href="#qb-page">QB</a></li>
+				<li><a href="#rb-page">RB</a></li>
+				<li><a href="#wr-page">WR</a></li>
+				<li><a href="#te-page" class="ui-btn-active">TE</a></li>
+				<li><a href="#dst-page">D/ST</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div>
+</div>
+
+<div data-role="page" id="dst-page">
+	<div data-role="header">
+		<h1>@ViewBag.Title</h1>
+		@Html.Partial("~/Views/Espn/_Menu.cshtml")
+	</div>
+	<div role="main" class="ui-content">
+		@{if (Model != null)
+			{
+				foreach (FantasyFootball.Models.Ranking Rank in Model["Defensive Special Teams"])
+				{
+					<ul class="sm-playerRank">
+						<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
+						<li class="pick">
+							<ul class="playerRole">
+								<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+								<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+							</ul>
+						</li>
+						<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
+					</ul>
+				}
+			}
+		}
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar" class="ui-state-persist">
+			<ul>
+				<li><a href="#qb-page">QB</a></li>
+				<li><a href="#rb-page">RB</a></li>
+				<li><a href="#wr-page">WR</a></li>
+				<li><a href="#te-page">TE</a></li>
+				<li><a href="#dst-page" class="ui-btn-active">D/ST</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div>
+</div>

@@ -307,6 +307,7 @@
     <Content Include="Views\Yahoo\WaiverWire.cshtml" />
     <Content Include="Views\Espn\Team.cshtml" />
     <Content Include="Views\Espn\_Menu.cshtml" />
+    <Content Include="Views\Espn\WeeklyRankingsPPR.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

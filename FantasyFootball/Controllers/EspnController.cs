@@ -35,14 +35,15 @@ namespace FantasyFootball.Controllers
 			List<Player> myPlayers = new List<Player>();
 
 			if (Session["espn"] != null)
-				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"]);
+				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"], Request.Params["seasonId"]);
 			else
-				return RedirectToAction("Yahoo", "Login");
+				return RedirectToAction("Espn", "Login");
 
 			ViewBag.Title = "Some Team";
 			ViewBag.LeagueId = Request.Params["leagueId"];
 			ViewBag.TeamId = Request.Params["teamId"];
-			return View(myPlayers);
+			ViewBag.SeasonId = Request.Params["seasonId"];
+            return View(myPlayers);
 		}
 
 		public ActionResult Leagues()
@@ -57,6 +58,34 @@ namespace FantasyFootball.Controllers
 				return RedirectToAction("Espn", "Login");
 
 			return View(myLeagues);
+		}
+
+		public ActionResult WeeklyRankingsPPR()
+		{
+			List<string> playerEspnIds = new List<string>(), playerCbsIds = new List<string>();
+			if (Session["espn"] != null)
+			{
+				string html = Functions.GetHttpHtml(string.Format("http://games.espn.go.com/ffl/leaguerosters?leagueId={0}", Request.Params["leagueId"]), (string)Session["espn"]);
+				MatchCollection players = Regex.Matches(html, @"(?i)playerid=""(?<PlayerId>\d+)""", RegexOptions.Singleline);
+				if (players.Count > 0)
+				{
+					foreach (Match player in players)
+					{
+						playerEspnIds.Add(player.Groups["PlayerId"].Value);
+					}
+
+					using (FantasyFootballEntities db = new FantasyFootballEntities())
+					{
+						playerCbsIds = db.tbl_ff_players.Where(x => playerEspnIds.Contains(x.Espn) && x.Cbs != null).Select(s => s.Cbs).ToList();
+					}
+				}
+			}
+
+			Dictionary<string, List<FantasyFootball.Models.Ranking>> rankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);
+
+			ViewBag.Title = "Weekly PPR Rankings";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			return View(rankings);
 		}
 
 		public List<League> GetLeagues()
@@ -90,9 +119,9 @@ namespace FantasyFootball.Controllers
 			return myLeagues;
 		}
 
-		protected List<Player> GetPlayers(string leagueId, string teamId)
+		protected List<Player> GetPlayers(string leagueId, string teamId, string seasonId)
 		{
-			string html = Functions.GetHttpHtml(string.Format("http://games.espn.go.com/ffl/clubhouse?leagueId={0}&teamId={1}", leagueId, teamId), (string)Session["espn"]);
+			string html = Functions.GetHttpHtml(string.Format("http://games.espn.go.com/ffl/clubhouse?leagueId={0}&teamId={1}&seasonId={2}", leagueId, teamId, seasonId), (string)Session["espn"]);
 			Match htmlMatch = Regex.Match(html, @"(?i)<table[^>]+?class=""playertableFrameBorder""[^>]*>.*?</table>", RegexOptions.Singleline);
 			List<Player> myPlayers = new List<Player>();
 			if (htmlMatch.Success)
@@ -103,27 +132,30 @@ namespace FantasyFootball.Controllers
 					bool isEditPage = htmlMatch.Value.Contains(@"pncButton");
 					foreach (Match myTR in myTRs)
 					{
-						MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
-						if (myTDs.Count > 0)
+						if (myTR.Value.Contains("pncPlayerRow"))
 						{
-							Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{2,4})</span>", RegexOptions.Singleline);
-							Match opponentMatch = Regex.Match(myTDs[(isEditPage ? 5 : 4)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
-							Match opponentRankMatch = Regex.Match(myTDs[(isEditPage ? 14 : 13)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Content>[^<]+)</a>", RegexOptions.Singleline);
-							Match noteMatch = Regex.Match(myTDs[(isEditPage ? 6 : 5)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Content>[^<]+)</a>", RegexOptions.Singleline);
-							if (playerMatch.Success && opponentMatch.Success)
+							MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+							if (myTDs.Count > 0)
 							{
-								myPlayers.Add(new Player()
+								Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)""[^>]*>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{2,4})", RegexOptions.Singleline);
+								Match opponentMatch = Regex.Match(myTDs[(isEditPage ? 4 : 3)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
+								Match opponentRankMatch = Regex.Match(myTDs[(isEditPage ? 13 : 12)].Groups["Content"].Value, @"(?i)<a[^>]+?>(?<Content>.*?)</a>", RegexOptions.Singleline);
+								Match noteMatch = Regex.Match(myTDs[(isEditPage ? 5 : 4)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Content>[^<]+)</a>", RegexOptions.Singleline);
+								if (playerMatch.Success && opponentMatch.Success)
 								{
-									PlayerId = playerMatch.Groups["PlayerId"].Value,
-									Name = playerMatch.Groups["PlayerName"].Value,
-									Position = playerMatch.Groups["Position"].Value,
-									Team = playerMatch.Groups["Team"].Value.ToLower(),
-									Opponent = Regex.Replace(opponentMatch.Groups["Opponent"].Value, @"@", string.Empty, RegexOptions.Singleline).ToLower(),
-									OpponentRank = (opponentRankMatch.Success ? opponentRankMatch.Groups["Content"].Value : string.Empty),
-									Note01 = (noteMatch.Success ? noteMatch.Groups["Content"].Value : string.Empty)
-								});
+									myPlayers.Add(new Player()
+									{
+										PlayerId = playerMatch.Groups["PlayerId"].Value,
+										Name = playerMatch.Groups["PlayerName"].Value,
+										Position = playerMatch.Groups["Position"].Value,
+										Team = playerMatch.Groups["Team"].Value.ToLower(),
+										Opponent = Regex.Replace(opponentMatch.Groups["Opponent"].Value, @"@", string.Empty, RegexOptions.Singleline).ToLower(),
+										OpponentRank = (opponentRankMatch.Success ? opponentRankMatch.Groups["Content"].Value : "&nbsp;"),
+										Note01 = (noteMatch.Success ? noteMatch.Groups["Content"].Value : string.Empty)
+									});
+								}
 							}
-						}
+						}						
 					}
 				}
 			}

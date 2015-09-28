@@ -21,14 +21,23 @@
 						<table width="100%" cellpadding="0" cellspacing="0" border="0">
 							<tr>
 								<td width="35px">
-									<img src="http://sports.cbsimg.net/images/football/nfl/players/60x80/@string.Format("{0}.jpg", Player.PlayerAltId)" class="roundTopL roundBottomL" style="height: 50px; width: auto; display: block" />
+									@{
+										if (Player.Position != "DEF")
+										{
+											<img src="http://sports.cbsimg.net/images/football/nfl/players/60x80/@string.Format("{0}.jpg", Player.PlayerAltId)" class="roundTopL roundBottomL" style="height: 50px; width: auto; display: block" />
+										}
+										else
+										{
+											<img src="~/Content/images/bgs/@string.Format("{0}.jpg", Player.Team.ToLower())" class="roundTopL roundBottomL" style="height: 50px; width: auto; display: block" />
+										}
+									}
 								</td>
 								<td width="40px">
 									<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Team.ToLower())" width="40" height="30" /></div>
 									<div class="gdBlack txWhite txBold txCenter">@Player.Position</div>
 								</td>
 								<td style="padding: 3px 10px;">
-                                    <b>@Player.Name</b><br />@Player.Note01
+                                    <b>@Html.Raw(Player.Name)</b><br />@Player.Note01
 								</td>
                                 <td width="40px">
 									<div class="teamIcon roundTopR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Opponent.ToLower())" width="40" height="30" class="roundTopR" /></div>

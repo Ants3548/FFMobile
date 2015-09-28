@@ -26,7 +26,7 @@
 							@foreach (FantasyFootball.Models.Player Player in Transaction.Players)
 							{
 							<ul class="playerRank">
-								<li class="name gdWhite"><b class="ui-link">@Player.Name@((Player.Position == "DST") ? " D/ST" : "")</b></li>
+								<li class="name gdWhite"><b class="ui-link">@Player.Name@((Player.Position == "DEF") ? " D/ST" : "")</b></li>
 								<li class="pick txWhite txBold txCenter roundTopL roundBottomL @((Player.Added) ? "gdGreen" : "gdRed")" style="font-size: 2em;">@((Player.Added) ? "+" : "-")</li>
 								<li class="team">
 									<ul class="playerRole">

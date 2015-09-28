@@ -161,20 +161,25 @@ namespace FantasyFootball.Controllers
 						MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
 						if(myTDs.Count > 0)
 						{
-							Match playerMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/players/(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
-							Match opponentMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)ysf-game-status.*?<a\s+[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
-							if(playerMatch.Success && opponentMatch.Success)
+							MatchCollection hrefMatches = Regex.Matches(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)<a.*?href=""(?<Href>[^""]+)[^>]+>(?<Content>.*?)</a>", RegexOptions.Singleline);
+							if(hrefMatches.Count > 0)
 							{
-								myPlayers.Add(new Player()
+								Match playerMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/(players|teams)/(?<PlayerId>[^""]+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
+								Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count-1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)<a[^>]+>(?<Opponent>\w+)$", RegexOptions.Singleline);
+								Match injuryMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)F-injury[^>]+>(?<InjuryStatus>[^<]+)</span>", RegexOptions.Singleline);
+								if (playerMatch.Success)
 								{
-									PlayerId = playerMatch.Groups["PlayerId"].Value,
-									Name = playerMatch.Groups["PlayerName"].Value,
-									Position = playerMatch.Groups["Position"].Value,
-									Team = playerMatch.Groups["Team"].Value.ToLower(),
-									Opponent = Regex.Match(opponentMatch.Groups["Opponent"].Value, @"\w+$", RegexOptions.Singleline).Value.ToLower(),
-									Note01 = opponentMatch.Groups["Opponent"].Value
-								});
-                            }
+									myPlayers.Add(new Player()
+									{
+										PlayerId = playerMatch.Groups["PlayerId"].Value,
+										Name = playerMatch.Groups["PlayerName"].Value + (injuryMatch.Success ? @" - <span class=""txRed"">" + injuryMatch.Groups["InjuryStatus"].Value.Substring(0, 1) + "</span>" : string.Empty),
+										Position = playerMatch.Groups["Position"].Value,
+										Team = playerMatch.Groups["Team"].Value.ToLower(),
+										Opponent = opponentMatch.Groups["Opponent"].Value.ToLower(),
+										Note01 = opponentMatch.Groups["Note"].Value.Trim()
+									});
+								}
+							}							
 						}
 					}
 				}
@@ -287,7 +292,7 @@ namespace FantasyFootball.Controllers
 						{
 							//Get Owner info
 							Match ownerMatch = Regex.Match(myTDs[2].Groups["Content"].Value, @"/f1/(?<LeagueId>\d+)/(?<OwnerId>\d+)[^>]+>(?<OwnerName>[^<]+)</a>.*?<span[^>]*>(?<TimeStamp>[^<]+)</span>", RegexOptions.Singleline);
-							MatchCollection playerMatch = Regex.Matches(myTDs[1].Groups["Content"].Value, @"(?i)http://sports.yahoo.com/nfl/players/(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>.*?<span[^>]*>(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
+							MatchCollection playerMatch = Regex.Matches(myTDs[1].Groups["Content"].Value, @"(?i)http://sports.yahoo.com/nfl/(players|teams)/(?<PlayerId>[^""]+)[^>]+>(?<PlayerName>[^<]+)</a>.*?<span[^>]*>(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
 							MatchCollection changesMatch = Regex.Matches(myTDs[0].Groups["Content"].Value, @"(?i)title=""(?<ChangeType>[^""]+)""", RegexOptions.Singleline);
 							if (ownerMatch.Success && playerMatch.Count > 0 && changesMatch.Count > 0)
 							{

@@ -43,7 +43,7 @@ namespace FantasyFootball.Controllers
 
 		public ActionResult Teams()
 		{
-			List<Owner> myTeams = new List<Owner>();
+			Dictionary<string, List<Owner>> myTeams = new Dictionary<string, List<Owner>>();
 
 			if (Session["yahoo"] != null)
 				myTeams = GetTeams(Request.Params["leagueId"]);
@@ -193,7 +193,10 @@ namespace FantasyFootball.Controllers
 				foreach (tbl_ff_players entityPlayer in playerEntityList)
 				{
 					Player yahooPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Yahoo select p).FirstOrDefault();
-					yahooPlayer.PlayerAltId = entityPlayer.Cbs;
+					if(yahooPlayer != null)
+					{
+						yahooPlayer.PlayerAltId = entityPlayer.Cbs;
+					}					
 				}
 			}			
 
@@ -252,22 +255,43 @@ namespace FantasyFootball.Controllers
 			return myPlayers;
 		}
 
-		protected List<Owner> GetTeams(string leagueId)
+		protected Dictionary<string, List<Owner>> GetTeams(string leagueId)
 		{
 			string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/", leagueId), (string)Session["yahoo"]);
-			Match htmlMatch = Regex.Match(html, @"(?i)standingstable.*?</table>", RegexOptions.Singleline);
-			List<Owner> myOwners = new List<Owner>();
+			Match htmlMatch = Regex.Match(html, @"(?i)standingstable.*?<tbody>(?<Content>.*?)</tbody>.*?</table>", RegexOptions.Singleline);
+			Dictionary<string, List<Owner>> myOwners = new Dictionary<string, List<Owner>>();
             if (htmlMatch.Success)
 			{
-				MatchCollection myHrefs = Regex.Matches(htmlMatch.Value, @"(?i)href=""/f1/\d+/(?<OwnerId>\d+)"">(?<TeamName>.*?)</a>", RegexOptions.Singleline);
-				if (myHrefs.Count > 0)
+				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
+				if (myTRs.Count > 0)
 				{
-					foreach (Match myHref in myHrefs)
+					string keyName = string.Empty;
+					foreach (Match myTR in myTRs)
 					{
-						myOwners.Add(new Owner() {
-							Id = myHref.Groups["OwnerId"].Value,
-							TeamName = myHref.Groups["TeamName"].Value
-						});
+						MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+						if (myTDs.Count > 0)
+						{
+							if(myTDs.Count == 1)
+							{
+								keyName = Functions.StripHtmlTags(myTDs[0].Groups["Content"].Value);
+								myOwners.Add(keyName, new List<Owner>());
+							}
+							else if(myTDs.Count > 1)
+							{
+								Match ownerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)src=""(?<Avatar>[^""]+)"".*?href=""/f1/\d+/(?<OwnerId>\d+)"">(?<TeamName>.*?)</a>", RegexOptions.Singleline);
+								if (ownerMatch.Success)
+								{
+									myOwners[keyName].Add(new Owner()
+									{
+										Rank = Int32.Parse(Functions.StripHtmlTags(myTDs[0].Groups["Content"].Value)),
+										Id = ownerMatch.Groups["OwnerId"].Value,
+										TeamName = ownerMatch.Groups["TeamName"].Value,
+										Avatar = ownerMatch.Groups["Avatar"].Value,
+										Record = myTDs[2].Groups["Content"].Value
+									});
+								}								
+							}
+						}						
                     }
 				}
 			}

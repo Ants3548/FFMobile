@@ -1,4 +1,4 @@
-﻿@model List<FantasyFootball.Models.Owner>
+﻿@model Dictionary<string, List<FantasyFootball.Models.Owner>>
 
 <div data-role="page">
 	<div data-role="header">
@@ -6,14 +6,23 @@
 		@Html.Partial("~/Views/Yahoo/_Menu.cshtml")
 	</div>
 	<div data-role="content">
-		@{if (Model != null)
+		@if (Model != null)
+		{
+			foreach (KeyValuePair<string, List<FantasyFootball.Models.Owner>> Conference in Model)
 			{
 				<ul data-role="listview" data-inset="true">
-					@foreach (FantasyFootball.Models.Owner Owner in Model)
+					<li data-role="list-divider">@Conference.Key</li>
+					@foreach (FantasyFootball.Models.Owner Owner in Conference.Value)
 					{
-						<li><a href="@Url.Action("Team", "Yahoo", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId, teamId = Owner.Id }))" data-ajax="false">@Owner.TeamName</a></li>
+						<li>
+							<a href="@Url.Action("Team", "Yahoo", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId, teamId = Owner.Id }))" data-ajax="false">
+								<img src="@Owner.Avatar">
+								<h2>@Owner.TeamName</h2>
+								<p>@Owner.Record</p>
+							</a>
+						</li>
 					}
-				</ul>				
+				</ul>
 			}
 		}
 	</div>

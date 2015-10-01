@@ -336,7 +336,7 @@ namespace FantasyFootball.Controllers
 					bool reachedZero = false; int count = 0;
 					while(reachedZero == false)
 					{
-						string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/players?status=ALL&pos=O&stat1=S_W_{1}&sort=PTS&sdir=1&count={2}", leagueId, i, count), (string)Session["yahoo"]);
+						string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/players?status=ALL&pos=ALL&stat1=S_W_{1}&sort=PTS&sdir=1&count={2}", leagueId, i, count), (string)Session["yahoo"]);
 						Match htmlMatch = Regex.Match(html, @"(?i)class=""players"">\s+<table[^>]+>.*?<tbody>(?<Content>.*?)</tbody>.*?</table>", RegexOptions.Singleline);
 						if(htmlMatch.Success)
 						{

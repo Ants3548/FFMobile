@@ -228,10 +228,12 @@
     <Content Include="Content\images\icons\teams\80x60\hou.jpg" />
     <Content Include="Content\images\icons\teams\80x60\ind.jpg" />
     <Content Include="Content\images\icons\teams\80x60\jac.jpg" />
+    <Content Include="Content\images\icons\teams\80x60\jax.jpg" />
     <Content Include="Content\images\icons\teams\80x60\kc.jpg" />
     <Content Include="Content\images\icons\teams\80x60\mia.jpg" />
     <Content Include="Content\images\icons\teams\80x60\min.jpg" />
     <Content Include="Content\images\icons\teams\80x60\ne.jpg" />
+    <Content Include="Content\images\icons\teams\80x60\nfl.jpg" />
     <Content Include="Content\images\icons\teams\80x60\no.jpg" />
     <Content Include="Content\images\icons\teams\80x60\nyg.jpg" />
     <Content Include="Content\images\icons\teams\80x60\nyj.jpg" />
@@ -245,6 +247,7 @@
     <Content Include="Content\images\icons\teams\80x60\tb.jpg" />
     <Content Include="Content\images\icons\teams\80x60\ten.jpg" />
     <Content Include="Content\images\icons\teams\80x60\was.jpg" />
+    <Content Include="Content\images\icons\teams\80x60\wsh.jpg" />
     <Content Include="Content\images\icons\teams\archive40x30\Ari.jpg" />
     <Content Include="Content\images\icons\teams\archive40x30\Atl.jpg" />
     <Content Include="Content\images\icons\teams\archive40x30\Atlt.jpg" />

@@ -12,19 +12,22 @@
 
 @{if (Model != null)
 	{
-		List<string> myPositions = Model.Select(myp => myp.Position).Distinct().ToList();
-		List<string> myTeams = Model.Select(myp => myp.Team).Distinct().ToList();
+		List<string> myPositions = new List<string>() { "QB", "RB", "WR", "TE", "DEF", "K" };
+		myPositions = myPositions.Intersect(Model.Select(myp => myp.Position).Distinct().ToList()).ToList();
+        List<string> myTeams = Model.Select(myp => myp.Team).Distinct().ToList();
 		int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Select(s => s.Week).Distinct().Last();
 		foreach (string myPosition in myPositions)
 		{
+			List<FantasyFootball.Models.TeamWeeklyStats> posStats = Model.Where(ps => ps.Position == myPosition).OrderBy(o => o.Points).ToList();
+			if(posStats.Count > 0)
+			{
 			<div data-role="page" id="@string.Format("{0}-page", myPosition)">
 				<div data-role="header">
 					<h1>@ViewBag.Title</h1>
 					@Html.Partial("~/Views/Yahoo/_Menu.cshtml")
 				</div>
 				<div role="main" class="ui-content">
-					@{
-						List<FantasyFootball.Models.TeamWeeklyStats> posStats = Model.Where(ps => ps.Position == myPosition).OrderBy(o => o.Points).ToList();
+					@{						
 						List<FantasyFootball.Models.TeamWeeklyStats> teams = new List<FantasyFootball.Models.TeamWeeklyStats>();
 						foreach (string team in myTeams)
 						{
@@ -58,8 +61,8 @@
 									{
 										week += 1;
 										<div class="teamBox marginLeft">
-											<div class="teamIcon gdSlate"></div>
-											<div class="gdBlack txWhite txBold txCenter">BYE</div>
+											<div class="teamIcon gdSlate"><img src="~/Content/images/icons/teams/80x60/nfl.jpg" width="40" height="30" /></div>
+											<div class="txBold txCenter">BYE</div>
 										</div>
 									}
 
@@ -72,8 +75,8 @@
 									if (m == matchups.Count - 1 && week + m != lastWeek) //Bye week is the last result
 									{
 										<div class="teamBox marginLeft">
-											<div class="teamIcon gdSlate roundTopR"></div>
-											<div class="gdBlack txWhite txBold txCenter roundBottomR">BYE</div>
+											<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/nfl.jpg" width="40" height="30" class="roundTopR" /></div>
+											<div class="txBold txCenter roundBottomR">BYE</div>
 										</div>
 									}
 								}
@@ -86,12 +89,13 @@
 						<ul>
 							@foreach (string myPos in myPositions)
 							{
-								<li><a href="@string.Format("#{0}-page", myPos)">@myPos</a></li>
+								<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition == myPos ? "ui-btn-active" : "")">@myPos</a></li>
 							}
 						</ul>
 					</div><!-- /navbar -->
 				</div>
 			</div>
+			}
 		}
 	}
 }

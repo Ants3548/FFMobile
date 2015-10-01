@@ -26,6 +26,7 @@ namespace FantasyFootball.DAL
         }
     
         public DbSet<tbl_ff_players> tbl_ff_players { get; set; }
-        public DbSet<tbl_ff_stats_weekly_players> tbl_ff_stats_weekly_players { get; set; }
+        public DbSet<tbl_ff_matchups> tbl_ff_matchups { get; set; }
+        public DbSet<tbl_ff_weeks> tbl_ff_weeks { get; set; }
     }
 }

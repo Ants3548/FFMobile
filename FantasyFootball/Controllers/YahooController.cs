@@ -25,7 +25,29 @@ namespace FantasyFootball.Controllers
 
 			return View(myLeagues);
 		}
-		
+
+		public ActionResult SoS()
+		{
+			List<TeamWeeklyStats> myStats = new List<TeamWeeklyStats>();
+			List<tbl_ff_matchups> matchups = new List<tbl_ff_matchups>();
+            int week = 1;
+			//transaction-table
+			if (Session["yahoo"] != null)
+			{				
+                myStats = GetTeamWeeklyStats(Request.Params["leagueId"], ref week, ref matchups);
+			}
+			else
+				return RedirectToAction("Yahoo", "Login");
+
+
+			ViewBag.Title = "Strength of Schedule";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			ViewBag.TeamId = Request.Params["teamId"];
+			ViewBag.Matchups = matchups;
+			ViewBag.Week = week;
+			return View(myStats);
+		}
+
 		public ActionResult Team()
 		{
 			List<Player> myPlayers = new List<Player>();
@@ -297,6 +319,108 @@ namespace FantasyFootball.Controllers
 			}
 
 			return myOwners;
+		}
+
+		protected List<TeamWeeklyStats> GetTeamWeeklyStats(string leagueId, ref int week, ref List<tbl_ff_matchups> matchups)
+		{
+			List<TeamWeeklyStats> myStats = new List<TeamWeeklyStats>();
+			List<TeamWeeklyStats> opponentStats = new List<TeamWeeklyStats>();
+			FantasyFootballEntities db = new FantasyFootballEntities();
+			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
+			if(myWeek != null)
+			{
+				week = myWeek.Id;				
+				matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - 2 && mch.Week <= myWeek.Id + 3).OrderBy(o => o.Date).ToList();
+				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
+				{
+					bool reachedZero = false; int count = 0;
+					while(reachedZero == false)
+					{
+						string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/players?status=ALL&pos=O&stat1=S_W_{1}&sort=PTS&sdir=1&count={2}", leagueId, i, count), (string)Session["yahoo"]);
+						Match htmlMatch = Regex.Match(html, @"(?i)class=""players"">\s+<table[^>]+>.*?<tbody>(?<Content>.*?)</tbody>.*?</table>", RegexOptions.Singleline);
+						if(htmlMatch.Success)
+						{
+							MatchCollection myTRs = Regex.Matches(htmlMatch.Groups["Content"].Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
+							if(myTRs.Count > 0)
+							{
+								foreach (Match myTR in myTRs)
+								{
+									MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+									if (myTDs.Count > 0)
+									{
+										Match myPlayerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)(?<Team>\w+)\s-\s(?<Position>\w+)</span>", RegexOptions.Singleline);
+										Decimal myPoints;
+										if (myPlayerMatch.Success && decimal.TryParse(Functions.StripHtmlTags(myTDs[5].Groups["Content"].Value), out myPoints))
+										{
+											if(myPoints > 0)
+											{
+												TeamWeeklyStats tmpStats = myStats.Where(s => s.Team == myPlayerMatch.Groups["Team"].Value && s.Position == myPlayerMatch.Groups["Position"].Value && s.Week == i).SingleOrDefault();
+												if(tmpStats != null)
+												{
+													tmpStats.Points += myPoints;
+                                                }
+												else
+												{
+													myStats.Add(new TeamWeeklyStats()
+													{
+														Week = i,
+														Team = myPlayerMatch.Groups["Team"].Value,
+														Position = myPlayerMatch.Groups["Position"].Value,
+														Points = myPoints
+													});
+												}												
+											}
+											else
+											{
+												reachedZero = true;
+												break;
+                                            }
+                                        }
+									}
+								}
+							}
+							else
+							{
+								break;
+							}
+						}
+						else
+						{
+							break;
+						}
+
+						//increment results count
+						count += 25;
+                    }					
+				}
+
+				//Calculate opposite results for opponents				
+				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
+				{
+					List<tbl_ff_matchups> myMatchups = matchups.Where(mch => mch.Week == i).ToList();
+					foreach(tbl_ff_matchups match in myMatchups)
+					{
+						List<TeamWeeklyStats> homeStats = myStats.Where(hm => hm.Week == i && hm.Team.ToUpper() == match.HomeTeam).Select(hm => new TeamWeeklyStats() { Week = 0, Points = hm.Points, Team = match.AwayTeam, Position = hm.Position }).ToList();
+						List<TeamWeeklyStats> awayStats = myStats.Where(aw => aw.Week == i && aw.Team.ToUpper() == match.AwayTeam).Select(aw => new TeamWeeklyStats() { Week = 0, Points = aw.Points, Team = match.HomeTeam, Position = aw.Position }).ToList();
+						List<TeamWeeklyStats> oppStats = homeStats.Union(awayStats).ToList();
+
+						foreach(TeamWeeklyStats myWeeklyStat in oppStats)
+						{
+							TeamWeeklyStats opponentStat = opponentStats.Where(ost => ost.Team == myWeeklyStat.Team && ost.Position == myWeeklyStat.Position).SingleOrDefault();
+                            if (opponentStat != null)
+							{
+								opponentStat.Points += myWeeklyStat.Points;
+                            }
+							else
+							{
+								opponentStats.Add(myWeeklyStat);
+                            }
+						}
+                    }
+                }
+			}
+			
+			return opponentStats;
 		}
 
 		protected List<Transaction> GetTransactions(string leagueId)

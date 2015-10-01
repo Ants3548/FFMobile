@@ -6,7 +6,8 @@
     <edmx:Diagrams>
       <Diagram DiagramId="3d2f1f7a408941a8986bfcef76e08255" Name="Diagram1">
         <EntityTypeShape EntityType="FantasyFootballModel.tbl_ff_players" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FantasyFootballModel.tbl_ff_stats_weekly_players" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FantasyFootballModel.tbl_ff_matchups" Width="1.5" PointX="2.625" PointY="0.75" />
+        <EntityTypeShape EntityType="FantasyFootballModel.tbl_ff_weeks" Width="1.5" PointX="4.5" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

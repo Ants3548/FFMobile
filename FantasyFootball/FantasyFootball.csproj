@@ -307,6 +307,7 @@
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\RankingsModel.cs" />
     <Compile Include="Models\RankingsPostModel.cs" />
+    <Compile Include="Models\TeamWeeklyStatsModel.cs" />
     <Compile Include="Models\TransactionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -342,6 +343,8 @@
     <Content Include="Views\Espn\Team.cshtml" />
     <Content Include="Views\Espn\_Menu.cshtml" />
     <Content Include="Views\Espn\WeeklyRankingsPPR.cshtml" />
+    <Content Include="Views\Database\UsaToday.cshtml" />
+    <Content Include="Views\Yahoo\SoS.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

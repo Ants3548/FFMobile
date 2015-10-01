@@ -1,0 +1,97 @@
+﻿@model List<FantasyFootball.Models.TeamWeeklyStats>
+
+@section HeadCSS
+{
+	<style type="text/css">
+		.gdBlack, .gdGreen, .gdRed { padding: 2px 0; text-shadow: none; }
+		.rankRow { margin-bottom: 0.5em; background-color: #fff; border: solid 1px #ddd; position: relative; text-align: right; }
+		.teamBox { display: inline-block; width: 40px; }
+		.marginLeft { margin-left: 1em; }
+	</style>
+}
+
+@{if (Model != null)
+	{
+		List<string> myPositions = Model.Select(myp => myp.Position).Distinct().ToList();
+		List<string> myTeams = Model.Select(myp => myp.Team).Distinct().ToList();
+		int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Select(s => s.Week).Distinct().Last();
+		foreach (string myPosition in myPositions)
+		{
+			<div data-role="page" id="@string.Format("{0}-page", myPosition)">
+				<div data-role="header">
+					<h1>@ViewBag.Title</h1>
+					@Html.Partial("~/Views/Yahoo/_Menu.cshtml")
+				</div>
+				<div role="main" class="ui-content">
+					@{
+						List<FantasyFootball.Models.TeamWeeklyStats> posStats = Model.Where(ps => ps.Position == myPosition).OrderBy(o => o.Points).ToList();
+						List<FantasyFootball.Models.TeamWeeklyStats> teams = new List<FantasyFootball.Models.TeamWeeklyStats>();
+						foreach (string team in myTeams)
+						{
+							decimal pts = 0;
+							List<FantasyFootball.DAL.tbl_ff_matchups> matches = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == team.ToUpper() || m.HomeTeam == team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+							foreach (FantasyFootball.DAL.tbl_ff_matchups match in matches)
+							{
+								pts += posStats.Where(w => w.Team.ToUpper() == (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam)).Select(s => s.Points).Single();
+							}
+							teams.Add(new FantasyFootball.Models.TeamWeeklyStats() { Team = team.ToLower(), Points = (pts / matches.Count) });
+						}
+
+						teams = teams.OrderByDescending(o => o.Points).ToList();
+						for (int i = 0; i < teams.Count; i++)
+						{
+							FantasyFootball.Models.TeamWeeklyStats thisTeam = teams[i];
+							List<FantasyFootball.DAL.tbl_ff_matchups> matchups = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == thisTeam.Team.ToUpper() || m.HomeTeam == thisTeam.Team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+							int week = ViewBag.Week; bool isLast;
+							<div class="rankRow roundTopL roundBottomL roundTopR roundBottomR">
+								<div class="teamBox" style="position: absolute; left: 0;">
+									<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", thisTeam.Team.ToLower())" width="40" height="30" class="roundTopL" /></div>
+									<div class="gdBlack txWhite txBold txCenter roundBottomL">@(i + 1)</div>
+								</div>
+
+								@for (int m = 0; m < matchups.Count; m++)
+								{
+									FantasyFootball.DAL.tbl_ff_matchups match = matchups[m];
+									FantasyFootball.Models.TeamWeeklyStats otherTeam = posStats.Where(w => w.Team.ToUpper() == (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam)).SingleOrDefault();
+									int rank = (posStats.FindIndex(w => w.Team == otherTeam.Team) + 1);
+									if (week + m != match.Week) //Bye week occurred
+									{
+										week += 1;
+										<div class="teamBox marginLeft">
+											<div class="teamIcon gdSlate"></div>
+											<div class="gdBlack txWhite txBold txCenter">BYE</div>
+										</div>
+									}
+
+									isLast = (m == matchups.Count - 1 && week + m == lastWeek);
+									<div class="teamBox marginLeft">
+										<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", otherTeam.Team.ToLower())" width="40" height="30" class="@(isLast ? "roundTopR" : "")" /></div>
+										<div class="txWhite txBold txCenter @(rank <= 10 ? "gdRed" : (rank >= 23 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@rank</div>
+									</div>
+
+									if (m == matchups.Count - 1 && week + m != lastWeek) //Bye week is the last result
+									{
+										<div class="teamBox marginLeft">
+											<div class="teamIcon gdSlate roundTopR"></div>
+											<div class="gdBlack txWhite txBold txCenter roundBottomR">BYE</div>
+										</div>
+									}
+								}
+							</div>
+						}
+					}
+				</div>
+				<div data-role="footer" data-position="fixed">
+					<div data-role="navbar" class="ui-state-persist">
+						<ul>
+							@foreach (string myPos in myPositions)
+							{
+								<li><a href="@string.Format("#{0}-page", myPos)">@myPos</a></li>
+							}
+						</ul>
+					</div><!-- /navbar -->
+				</div>
+			</div>
+		}
+	}
+}

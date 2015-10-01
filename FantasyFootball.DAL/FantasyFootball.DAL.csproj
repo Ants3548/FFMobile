@@ -63,10 +63,13 @@
       <DependentUpon>FantasyDB.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="tbl_ff_matchups.cs">
+      <DependentUpon>FantasyDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="tbl_ff_players.cs">
       <DependentUpon>FantasyDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="tbl_ff_stats_weekly_players.cs">
+    <Compile Include="tbl_ff_weeks.cs">
       <DependentUpon>FantasyDB.tt</DependentUpon>
     </Compile>
   </ItemGroup>

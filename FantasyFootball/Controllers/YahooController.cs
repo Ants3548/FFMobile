@@ -28,13 +28,21 @@ namespace FantasyFootball.Controllers
 
 		public ActionResult SoS()
 		{
-			List<TeamWeeklyStats> myStats = new List<TeamWeeklyStats>();
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
 			List<tbl_ff_matchups> matchups = new List<tbl_ff_matchups>();
             int week = 1;
-			//transaction-table
+			
 			if (Session["yahoo"] != null)
-			{				
-                myStats = GetTeamWeeklyStats(Request.Params["leagueId"], ref week, ref matchups);
+			{
+				//Do a stat scrape
+				myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				if(myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 2);
+					myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				}
+				
+				//myStats = GetTeamWeeklyStats(Request.Params["leagueId"], ref week, ref matchups);
 			}
 			else
 				return RedirectToAction("Yahoo", "Login");
@@ -42,7 +50,6 @@ namespace FantasyFootball.Controllers
 
 			ViewBag.Title = "Strength of Schedule";
 			ViewBag.LeagueId = Request.Params["leagueId"];
-			ViewBag.TeamId = Request.Params["teamId"];
 			ViewBag.Matchups = matchups;
 			ViewBag.Week = week;
 			return View(myStats);
@@ -321,16 +328,26 @@ namespace FantasyFootball.Controllers
 			return myOwners;
 		}
 
-		protected List<TeamWeeklyStats> GetTeamWeeklyStats(string leagueId, ref int week, ref List<tbl_ff_matchups> matchups)
+		protected void GetSchedules(ref int week, ref List<tbl_ff_matchups> matchups)
+		{
+			FantasyFootballEntities db = new FantasyFootballEntities();
+			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
+			if (myWeek != null)
+			{
+				week = myWeek.Id;
+				matchups = db.tbl_ff_matchups.Where(mch => mch.Week <= myWeek.Id + 3).OrderBy(o => o.Date).ToList();
+			}
+		}
+
+		protected void SetTeamWeeklyStats(string leagueId, int weeks)
 		{
 			List<TeamWeeklyStats> myStats = new List<TeamWeeklyStats>();
 			List<TeamWeeklyStats> opponentStats = new List<TeamWeeklyStats>();
 			FantasyFootballEntities db = new FantasyFootballEntities();
 			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
 			if(myWeek != null)
-			{
-				week = myWeek.Id;				
-				matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - 2 && mch.Week <= myWeek.Id + 3).OrderBy(o => o.Date).ToList();
+			{			
+				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks).OrderBy(o => o.Date).ToList();
 				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
 				{
 					bool reachedZero = false; int count = 0;
@@ -418,9 +435,27 @@ namespace FantasyFootball.Controllers
 						}
                     }
                 }
+
+				//Create a collection ranking teams by points allowed
+				List<string> myPositions = new List<string>() { "QB", "RB", "WR", "TE", "DEF", "K" };
+                Dictionary<string, SortedList<decimal, string>> myTeamsPointsDictionary = new Dictionary<string, SortedList<decimal, string>>();
+                myPositions = myPositions.Intersect(opponentStats.Select(myp => myp.Position).Distinct().ToList()).ToList();
+				List<string> myTeams = opponentStats.Select(s => s.Team.ToUpper()).Distinct().ToList();
+                foreach (string position in myPositions)
+				{
+					foreach(string myTeam in myTeams)
+					{
+
+					}
+
+					myTeamsPointsDictionary.Add(
+						position, 
+						new SortedList<decimal, string>(opponentStats.Where(w => w.Position == position).OrderBy(o => o.Points).ToDictionary(d => d.Points, d => d.Team.ToUpper())));
+				}
+
+				//Save stats to Application scope
+				Common.Functions.SetWeeklyStats(new ApplicationWeeklyStats() { Website = "Yahoo", LeagueId = leagueId, PositionStats = myTeamsPointsDictionary });
 			}
-			
-			return opponentStats;
 		}
 
 		protected List<Transaction> GetTransactions(string leagueId)

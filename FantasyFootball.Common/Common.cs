@@ -48,5 +48,33 @@ namespace FantasyFootball.Common
 		{
 			return Regex.Replace(html, @"<[^>]+>", string.Empty, RegexOptions.Singleline);
 		}
+
+		public static ApplicationWeeklyStats GetWeeklyStats(string website, string leagueId)
+		{
+			ApplicationWeeklyStats myStats = null;
+			
+			if (HttpContext.Current.Application["WeeklyStats"] != null)
+			{
+				List<ApplicationWeeklyStats> applicationWeeklyStats = HttpContext.Current.Application["WeeklyStats"] as List<ApplicationWeeklyStats>;
+				myStats = applicationWeeklyStats.Where(w => w.Website == website && w.LeagueId == leagueId).SingleOrDefault();
+            }
+
+			return myStats;
+        }
+
+		public static void SetWeeklyStats(ApplicationWeeklyStats stats)
+		{
+			if (HttpContext.Current.Application["WeeklyStats"] != null)
+			{
+				List<ApplicationWeeklyStats> applicationWeeklyStats = HttpContext.Current.Application["WeeklyStats"] as List<ApplicationWeeklyStats>;
+				ApplicationWeeklyStats myStats = applicationWeeklyStats.Where(w => w.Website == stats.Website && w.LeagueId == stats.LeagueId).SingleOrDefault();
+				if(myStats != null)
+				{
+					applicationWeeklyStats.Remove(myStats);
+				}
+				applicationWeeklyStats.Add(stats);
+				HttpContext.Current.Application["WeeklyStats"] = applicationWeeklyStats;
+            }
+		}
 	}
 }

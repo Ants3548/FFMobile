@@ -364,7 +364,7 @@ namespace FantasyFootball.Controllers
 			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
 			if(myWeek != null)
 			{			
-				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks && mch.Week < myWeek.Id).OrderBy(o => o.Date).ToList();
+				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks).OrderBy(o => o.Date).ToList();
 				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
 				{
 					bool reachedZero = false; int count = 0;
@@ -472,15 +472,14 @@ namespace FantasyFootball.Controllers
 				List<string> myTeams = opponentStats.Select(s => s.Team.ToUpper()).Distinct().ToList();
                 foreach (string position in myPositions)
 				{
-					SortedList<decimal, string> positionStats = new SortedList<decimal, string>();
-                    foreach (string myTeam in myTeams)
+					foreach(string myTeam in myTeams)
 					{
-						var pointsAllowed = opponentStats.Where(w => w.Team.ToUpper() == myTeam.ToUpper() && w.Position == position).Select(s => s.Points).ToList();
-						var weeksPlayed = matchups.Where(w => w.HomeTeam == myTeam.ToUpper() || w.AwayTeam == myTeam.ToUpper());
-						positionStats.Add((pointsAllowed != null ? (pointsAllowed.Sum() / weeksPlayed.Count()) : 0), myTeam.ToUpper());                        
+
 					}
 
-					myTeamsPointsDictionary.Add(position, positionStats);
+					myTeamsPointsDictionary.Add(
+						position, 
+						new SortedList<decimal, string>(opponentStats.Where(w => w.Position == position).OrderBy(o => o.Points).ToDictionary(d => d.Points, d => d.Team.ToUpper())));
 				}
 
 				//Save stats to Application scope

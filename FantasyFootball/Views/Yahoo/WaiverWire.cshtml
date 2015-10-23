@@ -17,6 +17,7 @@
 	<div data-role="content">
 		@{foreach (FantasyFootball.Models.Player Player in Model)
 			{
+				int myIndex = Array.IndexOf(((FantasyFootball.Common.ApplicationWeeklyStats)ViewBag.WeeklyStats).PositionStats[Player.Position], Player.Opponent.ToUpper()) + 1;
 				<div style="margin-bottom: 0.5em; background-color: #fff; border: solid 1px #ddd;" class="roundTopL roundBottomL roundTopR roundBottomR">
 					<table width="100%" cellpadding="0" cellspacing="0" border="0">
 						<tr>
@@ -32,7 +33,7 @@
 							</td>
 							<td width="40px">
 								<div class="teamIcon roundTopR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Opponent.ToLower())" width="40" height="30" class="roundTopR" /></div>
-								<div class="gdBlack txWhite txBold txCenter roundBottomR">&nbsp;</div>
+								<div class="txWhite txBold txCenter roundBottomR @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack"))">@myIndex</div>
 							</td>
 						</tr>
 					</table>

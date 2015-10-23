@@ -57,15 +57,25 @@ namespace FantasyFootball.Controllers
 		public ActionResult Team()
 		{
 			List<Player> myPlayers = new List<Player>();
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
 
 			if (Session["yahoo"] != null)
+			{
 				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"]);
+				myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				if (myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+					myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				}
+			}				
 			else
 				return RedirectToAction("Yahoo", "Login");
 
 			ViewBag.Title = "Some Team";
 			ViewBag.LeagueId = Request.Params["leagueId"];
 			ViewBag.TeamId = Request.Params["teamId"];
+			ViewBag.WeeklyStats = myStats;
             return View(myPlayers);
 		}
 
@@ -101,15 +111,25 @@ namespace FantasyFootball.Controllers
 		public ActionResult WaiverWire()
 		{
 			List<Player> myPlayers = new List<Player>();
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
 
 			if (Session["yahoo"] != null)
+			{
 				myPlayers = GetWaivers(Request.Params["leagueId"]);
+				myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				if (myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+					myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				}
+			}				
 			else
 				return RedirectToAction("Yahoo", "Login");
 
 			ViewBag.Title = "Waiver Wire";
 			ViewBag.LeagueId = Request.Params["leagueId"];
 			ViewBag.TeamId = Request.Params["teamId"];
+			ViewBag.WeeklyStats = myStats;
 			return View(myPlayers);
 		}
 
@@ -181,19 +201,19 @@ namespace FantasyFootball.Controllers
 			if (htmlMatch.Success)
 			{
 				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>.*?</tr>", RegexOptions.Singleline);
-				if(myTRs.Count > 0)
+				if (myTRs.Count > 0)
 				{
 					bool isEditPage = htmlMatch.Value.Contains(@"roster-edit-form");
 					foreach (Match myTR in myTRs)
 					{
 						MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
-						if(myTDs.Count > 0)
+						if (myTDs.Count > 0)
 						{
 							MatchCollection hrefMatches = Regex.Matches(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)<a.*?href=""(?<Href>[^""]+)[^>]+>(?<Content>.*?)</a>", RegexOptions.Singleline);
-							if(hrefMatches.Count > 0)
+							if (hrefMatches.Count > 0)
 							{
 								Match playerMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/(players|teams)/(?<PlayerId>[^""]+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
-								Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count-1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)<a[^>]+>(?<Opponent>\w+)$", RegexOptions.Singleline);
+								Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count - 1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)<a[^>]+>(?<Opponent>\w+)$", RegexOptions.Singleline);
 								Match injuryMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)F-injury[^>]+>(?<InjuryStatus>[^<]+)</span>", RegexOptions.Singleline);
 								if (playerMatch.Success)
 								{
@@ -207,26 +227,26 @@ namespace FantasyFootball.Controllers
 										Note01 = opponentMatch.Groups["Note"].Value.Trim()
 									});
 								}
-							}							
+							}
 						}
 					}
 				}
 			}
 
 			//Get the CBS images for the players
-			using(FantasyFootballEntities db = new FantasyFootballEntities())
+			using (FantasyFootballEntities db = new FantasyFootballEntities())
 			{
 				List<string> yahooIdList = (from p in myPlayers select p.PlayerId).ToList();
 				List<tbl_ff_players> playerEntityList = db.tbl_ff_players.Where(x => yahooIdList.Contains(x.Yahoo) && x.Cbs != null).ToList();
 				foreach (tbl_ff_players entityPlayer in playerEntityList)
 				{
 					Player yahooPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Yahoo select p).FirstOrDefault();
-					if(yahooPlayer != null)
+					if (yahooPlayer != null)
 					{
 						yahooPlayer.PlayerAltId = entityPlayer.Cbs;
-					}					
+					}
 				}
-			}			
+			}
 
 			return myPlayers;
 		}
@@ -249,12 +269,12 @@ namespace FantasyFootball.Controllers
 							Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/players/(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{2,3})</span>", RegexOptions.Singleline);
 							Match opponentMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)ysf-game-status.*?<a\s+[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
 							Match injuryMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)<abbr[^>]*>(?<Content>[^<]+)</abbr>", RegexOptions.Singleline);
-                            if (playerMatch.Success && opponentMatch.Success)
+							if (playerMatch.Success && opponentMatch.Success)
 							{
 								myPlayers.Add(new Player()
 								{
 									PlayerId = playerMatch.Groups["PlayerId"].Value,
-									Name = playerMatch.Groups["PlayerName"].Value 
+									Name = playerMatch.Groups["PlayerName"].Value
 									+ string.Format(" {0}", Regex.Replace(myTDs[6].Groups["Content"].Value, @"(?i)<[^>]+>", string.Empty))
 									+ (injuryMatch.Success ? string.Format(" - <span class=\"txRed\">{0}</span>", injuryMatch.Groups["Content"].Value) : string.Empty),
 									Position = playerMatch.Groups["Position"].Value,
@@ -288,7 +308,7 @@ namespace FantasyFootball.Controllers
 			string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/", leagueId), (string)Session["yahoo"]);
 			Match htmlMatch = Regex.Match(html, @"(?i)standingstable.*?<tbody>(?<Content>.*?)</tbody>.*?</table>", RegexOptions.Singleline);
 			Dictionary<string, List<Owner>> myOwners = new Dictionary<string, List<Owner>>();
-            if (htmlMatch.Success)
+			if (htmlMatch.Success)
 			{
 				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
 				if (myTRs.Count > 0)
@@ -299,12 +319,12 @@ namespace FantasyFootball.Controllers
 						MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
 						if (myTDs.Count > 0)
 						{
-							if(myTDs.Count == 1)
+							if (myTDs.Count == 1)
 							{
 								keyName = Functions.StripHtmlTags(myTDs[0].Groups["Content"].Value);
 								myOwners.Add(keyName, new List<Owner>());
 							}
-							else if(myTDs.Count > 1)
+							else if (myTDs.Count > 1)
 							{
 								Match ownerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)src=""(?<Avatar>[^""]+)"".*?href=""/f1/\d+/(?<OwnerId>\d+)"">(?<TeamName>.*?)</a>", RegexOptions.Singleline);
 								if (ownerMatch.Success)
@@ -317,10 +337,10 @@ namespace FantasyFootball.Controllers
 										Avatar = ownerMatch.Groups["Avatar"].Value,
 										Record = myTDs[2].Groups["Content"].Value
 									});
-								}								
+								}
 							}
-						}						
-                    }
+						}
+					}
 				}
 			}
 
@@ -362,20 +382,37 @@ namespace FantasyFootball.Controllers
 			List<TeamWeeklyStats> opponentStats = new List<TeamWeeklyStats>();
 			FantasyFootballEntities db = new FantasyFootballEntities();
 			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
-			if(myWeek != null)
-			{			
-				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks && mch.Week < myWeek.Id).OrderBy(o => o.Date).ToList();
+			if (myWeek != null)
+			{
+				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks).OrderBy(o => o.Date).ToList();
+				//Correct Jacksonville abbrev
+				foreach (tbl_ff_matchups matchrow in matchups)
+				{
+					switch (matchrow.HomeTeam)
+					{
+						case "JAC":
+							matchrow.HomeTeam = "JAX";
+							break;
+					}
+					switch (matchrow.AwayTeam)
+					{
+						case "JAC":
+							matchrow.AwayTeam = "JAX";
+							break;
+					}
+				}
+
 				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
 				{
 					bool reachedZero = false; int count = 0;
-					while(reachedZero == false)
+					while (reachedZero == false)
 					{
 						string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/players?status=ALL&pos=ALL&stat1=S_W_{1}&sort=PTS&sdir=1&count={2}", leagueId, i, count), (string)Session["yahoo"]);
 						Match htmlMatch = Regex.Match(html, @"(?i)class=""players"">\s+<table[^>]+>.*?<tbody>(?<Content>.*?)</tbody>.*?</table>", RegexOptions.Singleline);
-						if(htmlMatch.Success)
+						if (htmlMatch.Success)
 						{
 							MatchCollection myTRs = Regex.Matches(htmlMatch.Groups["Content"].Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
-							if(myTRs.Count > 0)
+							if (myTRs.Count > 0)
 							{
 								foreach (Match myTR in myTRs)
 								{
@@ -386,13 +423,13 @@ namespace FantasyFootball.Controllers
 										Decimal myPoints;
 										if (myPlayerMatch.Success && decimal.TryParse(Functions.StripHtmlTags(myTDs[5].Groups["Content"].Value), out myPoints))
 										{
-											if(myPoints > 0)
+											if (myPoints > 0)
 											{
 												TeamWeeklyStats tmpStats = myStats.Where(s => s.Team == myPlayerMatch.Groups["Team"].Value && s.Position == myPlayerMatch.Groups["Position"].Value && s.Week == i).SingleOrDefault();
-												if(tmpStats != null)
+												if (tmpStats != null)
 												{
 													tmpStats.Points += myPoints;
-                                                }
+												}
 												else
 												{
 													myStats.Add(new TeamWeeklyStats()
@@ -402,14 +439,14 @@ namespace FantasyFootball.Controllers
 														Position = myPlayerMatch.Groups["Position"].Value,
 														Points = myPoints
 													});
-												}												
+												}
 											}
 											else
 											{
 												reachedZero = true;
 												break;
-                                            }
-                                        }
+											}
+										}
 									}
 								}
 							}
@@ -425,31 +462,31 @@ namespace FantasyFootball.Controllers
 
 						//increment results count
 						count += 25;
-                    }					
+					}
 				}
 
-				//Calculate opposite results for opponents				
+				//Calculate opposite results for opponents		
 				Dictionary<string, int> teamWeekCounts = new Dictionary<string, int>();
 				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
 				{
 					List<tbl_ff_matchups> myMatchups = matchups.Where(mch => mch.Week == i).ToList();
-					foreach(tbl_ff_matchups match in myMatchups)
+					foreach (tbl_ff_matchups match in myMatchups)
 					{
 						List<TeamWeeklyStats> homeStats = myStats.Where(hm => hm.Week == i && hm.Team.ToUpper() == match.HomeTeam).Select(hm => new TeamWeeklyStats() { Week = 0, Points = hm.Points, Team = match.AwayTeam, Position = hm.Position }).ToList();
 						List<TeamWeeklyStats> awayStats = myStats.Where(aw => aw.Week == i && aw.Team.ToUpper() == match.AwayTeam).Select(aw => new TeamWeeklyStats() { Week = 0, Points = aw.Points, Team = match.HomeTeam, Position = aw.Position }).ToList();
 						List<TeamWeeklyStats> oppStats = homeStats.Union(awayStats).ToList();
 
-						foreach(TeamWeeklyStats myWeeklyStat in oppStats)
+						foreach (TeamWeeklyStats myWeeklyStat in oppStats)
 						{
 							TeamWeeklyStats opponentStat = opponentStats.Where(ost => ost.Team == myWeeklyStat.Team && ost.Position == myWeeklyStat.Position).SingleOrDefault();
-                            if (opponentStat != null)
+							if (opponentStat != null)
 							{
 								opponentStat.Points += myWeeklyStat.Points;
-                            }
+							}
 							else
 							{
 								opponentStats.Add(myWeeklyStat);
-                            }
+							}
 						}
 
 						//Add to week count tally for HomeTeam
@@ -462,25 +499,26 @@ namespace FantasyFootball.Controllers
 							teamWeekCounts[match.AwayTeam] += 1;
 						else
 							teamWeekCounts.Add(match.AwayTeam, 1);
-                    }
-                }
+					}
+				}
 
 				//Create a collection ranking teams by points allowed
 				List<string> myPositions = new List<string>() { "QB", "RB", "WR", "TE", "DEF", "K" };
-                Dictionary<string, string[]> myTeamsPointsDictionary = new Dictionary<string, string[]>();
-                myPositions = myPositions.Intersect(opponentStats.Select(myp => myp.Position).Distinct().ToList()).ToList();
+				Dictionary<string, string[]> myTeamsPointsDictionary = new Dictionary<string, string[]>();
+				myPositions = myPositions.Intersect(opponentStats.Select(myp => myp.Position).Distinct().ToList()).ToList();
 				List<string> myTeams = opponentStats.Select(s => s.Team.ToUpper()).Distinct().ToList();
-                foreach (string position in myPositions)
+				foreach (string position in myPositions)
 				{
-					SortedList<decimal, string> positionStats = new SortedList<decimal, string>();
-                    foreach (string myTeam in myTeams)
+					Dictionary<string, decimal> teamPts = new Dictionary<string, decimal>();
+					foreach (string myTeam in myTeams)
 					{
-						var pointsAllowed = opponentStats.Where(w => w.Team.ToUpper() == myTeam.ToUpper() && w.Position == position).Select(s => s.Points).ToList();
-						var weeksPlayed = matchups.Where(w => w.HomeTeam == myTeam.ToUpper() || w.AwayTeam == myTeam.ToUpper());
-						positionStats.Add((pointsAllowed != null ? (pointsAllowed.Sum() / weeksPlayed.Count()) : 0), myTeam.ToUpper());                        
+						int weekCount = teamWeekCounts[myTeam];
+						decimal pts = opponentStats.Where(w => w.Position == position && w.Team == myTeam).Sum(d => d.Points);
+						teamPts.Add(myTeam, pts / weekCount);
 					}
 
-					myTeamsPointsDictionary.Add(position, positionStats);
+					myTeamsPointsDictionary.Add(position, teamPts.OrderBy(o => o.Value).Select(s => s.Key).ToArray());
+					//myTeamsPointsDictionary.Add(position, new SortedList<decimal, string>(opponentStats.Where(w => w.Position == position).OrderBy(o => o.Points).ToDictionary(d => d.Points, d => d.Team.ToUpper())));
 				}
 
 				//Save stats to Application scope
@@ -496,9 +534,9 @@ namespace FantasyFootball.Controllers
 			if (htmlMatch.Success)
 			{
 				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
-				if(myTRs.Count > 0)
+				if (myTRs.Count > 0)
 				{
-					foreach(Match myTR in myTRs)
+					foreach (Match myTR in myTRs)
 					{
 						MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
 						if (myTDs.Count == 3)
@@ -521,7 +559,7 @@ namespace FantasyFootball.Controllers
 										Team = pMatch.Groups["Team"].Value.ToLower(),
 										Added = changesMatch[i].Groups["ChangeType"].Value.Contains("Added")
 									});
-                                }
+								}
 
 								myTransactions.Add(new Transaction()
 								{
@@ -532,7 +570,7 @@ namespace FantasyFootball.Controllers
 							}
 						}
 					}
-				}				
+				}
 			}
 
 			return myTransactions;

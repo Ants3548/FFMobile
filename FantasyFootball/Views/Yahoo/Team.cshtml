@@ -22,6 +22,7 @@
 							<tr>
 								<td width="35px">
 									@{
+										int myIndex = Array.IndexOf(((FantasyFootball.Common.ApplicationWeeklyStats)ViewBag.WeeklyStats).PositionStats[Player.Position], Player.Opponent.ToUpper()) + 1;
 										if (Player.Position != "DEF")
 										{
 											<img src="http://sports.cbsimg.net/images/football/nfl/players/60x80/@string.Format("{0}.jpg", Player.PlayerAltId)" class="roundTopL roundBottomL" style="height: 50px; width: auto; display: block" />
@@ -41,7 +42,7 @@
 								</td>
                                 <td width="40px">
 									<div class="teamIcon roundTopR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Opponent.ToLower())" width="40" height="30" class="roundTopR" /></div>
-									<div class="gdBlack txWhite txBold txCenter roundBottomR">&nbsp;</div>
+									<div class="txWhite txBold txCenter roundBottomR @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack"))">@myIndex</div>
 								</td>
 							</tr>
 						</table>

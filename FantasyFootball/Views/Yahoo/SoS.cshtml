@@ -12,7 +12,7 @@
 
 @{if (Model != null)
 	{
-		List<string> myTeams = Model.PositionStats.Values.First().ToList(); //Model.Select(myp => myp.Team).Distinct().ToList();
+		List<string> myTeams = Model.PositionStats.Values.First().ToList();
 		int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Select(s => s.Week).Distinct().Last();
 		foreach (string myPosition in Model.PositionStats.Keys)
 		{
@@ -34,7 +34,6 @@
 							foreach (FantasyFootball.DAL.tbl_ff_matchups match in matches)
 							{
 								pts += Array.IndexOf(myStats, (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam));
-								//pts += myStats.Where(w => w.Value.ToUpper() == (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam)).Select(s => s.Key).Single();
 							}
 							teams.Add(new FantasyFootball.Models.TeamWeeklyStats() { Team = team.ToLower(), Points = pts });
 						}
@@ -55,7 +54,7 @@
 								{
 									FantasyFootball.DAL.tbl_ff_matchups match = myMatchups[m];
 									string myOpponent = (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam);
-									int myIndex = Array.IndexOf(myStats, myOpponent) + 1; //myPosition.Value.IndexOfValue(myOpponent); //myStats.Where(w => w.Value.ToUpper() == (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam)).SingleOrDefault();
+									int myIndex = Array.IndexOf(myStats, myOpponent) + 1;
                                     if (week + m != match.Week) //Bye week occurred
 									{
 										week += 1;
@@ -68,7 +67,7 @@
 									isLast = (m == myMatchups.Count - 1 && week + m == lastWeek);
 									<div class="teamBox marginLeft">
 										<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", myOpponent.ToLower())" width="40" height="30" class="@(isLast ? "roundTopR" : "")" /></div>
-										<div class="txWhite txBold txCenter @(myIndex <= 9 ? "gdRed" : (myIndex >= 22 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@myIndex</div>
+										<div class="txWhite txBold txCenter @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@myIndex</div>
 									</div>
 
 									if (m == myMatchups.Count - 1 && week + m != lastWeek) //Bye week is the last result
@@ -91,7 +90,7 @@
 								<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition == myPos ? "ui-btn-active" : "")">@myPos</a></li>
 							}
 						</ul>
-					</div><!-- /navbar -->
+					</div>
 				</div>
 			</div>
 			}

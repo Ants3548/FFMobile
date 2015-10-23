@@ -4,7 +4,8 @@
 		<li><a href="/" data-icon="home" data-ajax="false"></a></li>
 		<li><a href="@Url.Action("Teams", "Espn", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId }))" data-icon="user" data-ajax="false"></a></li>
 		<li><a href="@Url.Action("WaiverWire", "Espn", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId }))" data-icon="bullets" data-ajax="false"></a></li>
-		<li><a href="@Url.Action("WeeklyRankingsPPR", "Espn", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId }))" data-icon="comment" data-ajax="false"></a></li>
+		@*<li><a href="@Url.Action("WeeklyRankingsPPR", "Espn", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId }))" data-icon="comment" data-ajax="false"></a></li>*@
+		<li><a href="@Url.Action("SoS", "ESPN", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId, seasonId = ViewBag.SeasonId }))" data-icon="comment" data-ajax="false"></a></li>
 		<li><a href="@Url.Action("Transactions", "Espn", new RouteValueDictionary(new { leagueId = ViewBag.LeagueId }))" data-icon="info" data-ajax="false"></a></li>
 	</ul>
 </div><!-- /navbar -->

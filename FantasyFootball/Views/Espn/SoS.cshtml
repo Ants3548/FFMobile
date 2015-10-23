@@ -1,0 +1,126 @@
+﻿@model FantasyFootball.Common.ApplicationWeeklyStats
+
+@section HeadCSS
+{
+	<style type="text/css">
+		.gdBlack, .gdGreen, .gdRed {
+			padding: 2px 0;
+			text-shadow: none;
+		}
+
+		.rankRow {
+			margin-bottom: 0.5em;
+			background-color: #fff;
+			border: solid 1px #ddd;
+			position: relative;
+			text-align: right;
+		}
+
+		.teamBox {
+			display: inline-block;
+			width: 40px;
+		}
+
+		.marginLeft {
+			margin-left: 1em;
+		}
+	</style>
+}
+
+@{if (Model != null)
+{
+	List<string> myTeams = Model.PositionStats.Values.First().ToList();
+	int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Select(s => s.Week).Distinct().Last();
+	foreach (string myPosition in Model.PositionStats.Keys)
+	{
+		string[] myStats = Model.PositionStats[myPosition];
+		if (myStats.Length > 0)
+		{
+			<div data-role="page" id="@string.Format("{0}-page", myPosition)">
+				<div data-role="header">
+					<h1>@ViewBag.Title - @myPosition</h1>
+					@Html.Partial("~/Views/ESPN/_Menu.cshtml")
+				</div>
+				<div role="main" class="ui-content">
+					@{
+			List<FantasyFootball.Models.TeamWeeklyStats> teams = new List<FantasyFootball.Models.TeamWeeklyStats>();
+			foreach (string team in myTeams)
+			{
+				decimal pts = 0;
+				List<FantasyFootball.DAL.tbl_ff_matchups> matches = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == team.ToUpper() || m.HomeTeam == team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+				foreach (FantasyFootball.DAL.tbl_ff_matchups match in matches)
+				{
+					pts += Array.IndexOf(myStats, (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam));
+				}
+				teams.Add(new FantasyFootball.Models.TeamWeeklyStats() { Team = team.ToLower(), Points = pts });
+			}
+
+			teams = teams.OrderByDescending(o => o.Points).ToList();
+			for (int i = 0; i < teams.Count; i++)
+			{
+				FantasyFootball.Models.TeamWeeklyStats thisTeam = teams[i];
+				List<FantasyFootball.DAL.tbl_ff_matchups> myMatchups = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == thisTeam.Team.ToUpper() || m.HomeTeam == thisTeam.Team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+				int week = ViewBag.Week; bool isLast;
+				<div class="rankRow roundTopL roundBottomL roundTopR roundBottomR">
+					<div class="teamBox" style="position: absolute; left: 0;">
+						<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", thisTeam.Team.ToLower())" width="40" height="30" class="roundTopL" /></div>
+						<div class="gdBlack txWhite txBold txCenter roundBottomL">@(i + 1)</div>
+					</div>
+
+					@for (int m = 0; m < myMatchups.Count; m++)
+					{
+						FantasyFootball.DAL.tbl_ff_matchups match = myMatchups[m];
+						string myOpponent = (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam);
+						int myIndex = Array.IndexOf(myStats, myOpponent) + 1;
+						if (week + m != match.Week) //Bye week occurred
+						{
+							week += 1;
+							<div class="teamBox marginLeft">
+								<div class="teamIcon gdSlate"><img src="~/Content/images/icons/teams/80x60/nfl.jpg" width="40" height="30" /></div>
+								<div class="txBold txCenter">BYE</div>
+							</div>
+						}
+
+						isLast = (m == myMatchups.Count - 1 && week + m == lastWeek);
+						<div class="teamBox marginLeft">
+							<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", myOpponent.ToLower())" width="40" height="30" class="@(isLast ? "roundTopR" : "")" /></div>
+							<div class="txWhite txBold txCenter @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@myIndex</div>
+						</div>
+
+						if (m == myMatchups.Count - 1 && week + m != lastWeek) //Bye week is the last result
+						{
+							<div class="teamBox marginLeft">
+								<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/nfl.jpg" width="40" height="30" class="roundTopR" /></div>
+								<div class="txBold txCenter roundBottomR">BYE</div>
+							</div>
+						}
+					}
+				</div>
+			}
+					}
+				</div>
+				<div data-role="footer" data-position="fixed">
+					<div data-role="navbar" class="ui-state-persist">
+						<ul>
+							@foreach (string myPos in Model.PositionStats.Keys.Take(5))
+							{
+								<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition == myPos ? "ui-btn-active" : "")">@myPos</a></li>
+							}
+						</ul>
+						@if (Model.PositionStats.Keys.Count > 5)
+						{
+							<ul>
+								@for (int i = 5; i < Model.PositionStats.Keys.Count; i++)
+								{
+									string myPos = (string)Model.PositionStats.Keys.ElementAt(i);
+									<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition == myPos ? "ui-btn-active" : "")">@myPos</a></li>
+								}
+							</ul>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	}
+}
+}

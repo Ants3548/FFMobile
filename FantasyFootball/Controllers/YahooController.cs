@@ -402,7 +402,7 @@ namespace FantasyFootball.Controllers
 					}
 				}
 
-				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
+				for (int i = myWeek.Id - weeks; i < myWeek.Id; i++)
 				{
 					bool reachedZero = false; int count = 0;
 					while (reachedZero == false)
@@ -467,7 +467,7 @@ namespace FantasyFootball.Controllers
 
 				//Calculate opposite results for opponents		
 				Dictionary<string, int> teamWeekCounts = new Dictionary<string, int>();
-				for (int i = myWeek.Id - 2; i < myWeek.Id; i++)
+				for (int i = myWeek.Id - weeks; i < myWeek.Id; i++)
 				{
 					List<tbl_ff_matchups> myMatchups = matchups.Where(mch => mch.Week == i).ToList();
 					foreach (tbl_ff_matchups match in myMatchups)
@@ -517,8 +517,8 @@ namespace FantasyFootball.Controllers
 						teamPts.Add(myTeam, pts / weekCount);
 					}
 
-					myTeamsPointsDictionary.Add(position, teamPts.OrderBy(o => o.Value).Select(s => s.Key).ToArray());
-					//myTeamsPointsDictionary.Add(position, new SortedList<decimal, string>(opponentStats.Where(w => w.Position == position).OrderBy(o => o.Points).ToDictionary(d => d.Points, d => d.Team.ToUpper())));
+					if (teamPts.Count > 0)
+						myTeamsPointsDictionary.Add(position, teamPts.OrderBy(o => o.Value).Select(s => s.Key).ToArray());					
 				}
 
 				//Save stats to Application scope

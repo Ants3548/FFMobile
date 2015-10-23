@@ -30,12 +30,50 @@ namespace FantasyFootball.Controllers
 			return View(myLeagues);
 		}
 
+		public ActionResult SoS()
+		{
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
+			List<tbl_ff_matchups> matchups = new List<tbl_ff_matchups>();
+			int week = 1;
+
+			if (Session["espn"] != null)
+			{
+				//Do a stat scrape
+				myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				if (myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+					myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				}
+			}
+			else
+				return RedirectToAction("ESPN", "Login");
+
+			GetSchedules(ref week, ref matchups);
+
+			ViewBag.Title = "Strength of Schedule";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			ViewBag.SeasonId = Request.Params["seasonId"];
+			ViewBag.Matchups = matchups;
+			ViewBag.Week = week;
+			return View(myStats);
+		}
+
 		public ActionResult Team()
 		{
 			List<Player> myPlayers = new List<Player>();
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
 
 			if (Session["espn"] != null)
+			{
 				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"], Request.Params["seasonId"]);
+				myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				if (myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+					myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				}
+			}				
 			else
 				return RedirectToAction("Espn", "Login");
 
@@ -43,6 +81,7 @@ namespace FantasyFootball.Controllers
 			ViewBag.LeagueId = Request.Params["leagueId"];
 			ViewBag.TeamId = Request.Params["teamId"];
 			ViewBag.SeasonId = Request.Params["seasonId"];
+			ViewBag.WeeklyStats = myStats;
             return View(myPlayers);
 		}
 
@@ -173,6 +212,190 @@ namespace FantasyFootball.Controllers
 			}
 
 			return myPlayers;
+		}
+
+		protected void GetSchedules(ref int week, ref List<tbl_ff_matchups> matchups)
+		{
+			FantasyFootballEntities db = new FantasyFootballEntities();
+			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
+			if (myWeek != null)
+			{
+				List<tbl_ff_matchups> matches = db.tbl_ff_matchups.Where(mch => mch.Week <= myWeek.Id + 3).OrderBy(o => o.Date).ToList();
+				//Correct Jacksonville abbrev
+				foreach (tbl_ff_matchups matchrow in matches)
+				{
+					switch (matchrow.HomeTeam)
+					{
+						case "JAC":
+							matchrow.HomeTeam = "JAX";
+							break;
+						case "WAS":
+							matchrow.HomeTeam = "WSH";
+							break;
+					}
+					switch (matchrow.AwayTeam)
+					{
+						case "JAC":
+							matchrow.AwayTeam = "JAX";
+							break;
+						case "WAS":
+							matchrow.AwayTeam = "WSH";
+							break;
+					}
+				}
+
+				week = myWeek.Id;
+				matchups = matches;
+			}
+		}
+
+		protected void SetTeamWeeklyStats(string leagueId, int weeks)
+		{
+			List<TeamWeeklyStats> myStats = new List<TeamWeeklyStats>();
+			List<TeamWeeklyStats> opponentStats = new List<TeamWeeklyStats>();
+			FantasyFootballEntities db = new FantasyFootballEntities();
+			tbl_ff_weeks myWeek = db.tbl_ff_weeks.Where(w => w.StartDate <= DateTime.Now && w.EndDate >= DateTime.Now).SingleOrDefault();
+			if (myWeek != null)
+			{
+				List<tbl_ff_matchups> matchups = db.tbl_ff_matchups.Where(mch => mch.Week >= myWeek.Id - weeks).OrderBy(o => o.Date).ToList();
+				//Correct Jacksonville abbrev
+				foreach (tbl_ff_matchups matchrow in matchups)
+				{
+					switch (matchrow.HomeTeam)
+					{
+						case "JAC":
+							matchrow.HomeTeam = "JAX";
+							break;
+						case "WAS":
+							matchrow.HomeTeam = "WSH";
+							break;
+					}
+					switch (matchrow.AwayTeam)
+					{
+						case "JAC":
+							matchrow.AwayTeam = "JAX";
+							break;
+						case "WAS":
+							matchrow.AwayTeam = "WSH";
+							break;
+					}
+				}
+
+				for (int i = myWeek.Id - weeks; i < myWeek.Id; i++)
+				{
+					bool reachedZero = false; int count = 0;
+					while (reachedZero == false)
+					{
+						string html = Functions.GetHttpHtml(string.Format("http://games.espn.go.com/ffl/leaders?leagueId={0}&scoringPeriodId={1}&startIndex={2}", leagueId, i, count), (string)Session["espn"]);
+						MatchCollection myTRs = Regex.Matches(html, @"(?i)<tr[^>]+pncPlayerRow[^>]+>(?<Content>.*?)</tr>", RegexOptions.Singleline);
+						if (myTRs.Count > 0)
+						{
+							foreach (Match myTR in myTRs)
+							{
+								MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+								if (myTDs.Count > 0)
+								{
+									Match myPlayerMatch = Regex.Match(myTDs[0].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)""[^>]*>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{1,4})", RegexOptions.Singleline);
+									//Match myPlayerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)(?<Team>\w+)\s-\s(?<Position>\w+)</span>", RegexOptions.Singleline);
+									Decimal myPoints;
+									if (myPlayerMatch.Success && decimal.TryParse(Functions.StripHtmlTags(myTDs[myTDs.Count - 1].Groups["Content"].Value), out myPoints))
+									{
+										if (myPoints > 0)
+										{
+											TeamWeeklyStats tmpStats = myStats.Where(s => s.Team == myPlayerMatch.Groups["Team"].Value && s.Position == myPlayerMatch.Groups["Position"].Value && s.Week == i).SingleOrDefault();
+											if (tmpStats != null)
+											{
+												tmpStats.Points += myPoints;
+											}
+											else
+											{
+												myStats.Add(new TeamWeeklyStats()
+												{
+													Week = i,
+													Team = myPlayerMatch.Groups["Team"].Value,
+													Position = myPlayerMatch.Groups["Position"].Value,
+													Points = myPoints
+												});
+											}
+										}
+										else
+										{
+											reachedZero = true;
+											break;
+										}
+									}
+								}
+							}
+						}
+						else
+						{
+							break;
+						}
+
+						//increment results count
+						count += 50;
+					}
+				}
+
+				//Calculate opposite results for opponents		
+				Dictionary<string, int> teamWeekCounts = new Dictionary<string, int>();
+				for (int i = myWeek.Id - weeks; i < myWeek.Id; i++)
+				{
+					List<tbl_ff_matchups> myMatchups = matchups.Where(mch => mch.Week == i).ToList();
+					foreach (tbl_ff_matchups match in myMatchups)
+					{
+						List<TeamWeeklyStats> homeStats = myStats.Where(hm => hm.Week == i && hm.Team.ToUpper() == match.HomeTeam).Select(hm => new TeamWeeklyStats() { Week = 0, Points = hm.Points, Team = match.AwayTeam, Position = hm.Position }).ToList();
+						List<TeamWeeklyStats> awayStats = myStats.Where(aw => aw.Week == i && aw.Team.ToUpper() == match.AwayTeam).Select(aw => new TeamWeeklyStats() { Week = 0, Points = aw.Points, Team = match.HomeTeam, Position = aw.Position }).ToList();
+						List<TeamWeeklyStats> oppStats = homeStats.Union(awayStats).ToList();
+
+						foreach (TeamWeeklyStats myWeeklyStat in oppStats)
+						{
+							TeamWeeklyStats opponentStat = opponentStats.Where(ost => ost.Team == myWeeklyStat.Team && ost.Position == myWeeklyStat.Position).SingleOrDefault();
+							if (opponentStat != null)
+							{
+								opponentStat.Points += myWeeklyStat.Points;
+							}
+							else
+							{
+								opponentStats.Add(myWeeklyStat);
+							}
+						}
+
+						//Add to week count tally for HomeTeam
+						if (teamWeekCounts.ContainsKey(match.HomeTeam))
+							teamWeekCounts[match.HomeTeam] += 1;
+						else
+							teamWeekCounts.Add(match.HomeTeam, 1);
+						//And for AwayTeam too
+						if (teamWeekCounts.ContainsKey(match.AwayTeam))
+							teamWeekCounts[match.AwayTeam] += 1;
+						else
+							teamWeekCounts.Add(match.AwayTeam, 1);
+					}
+				}
+
+				//Create a collection ranking teams by points allowed
+				List<string> myPositions = new List<string>() { "QB", "RB", "WR", "TE", "K", "DE", "DT", "LB", "S", "CB" };
+				Dictionary<string, string[]> myTeamsPointsDictionary = new Dictionary<string, string[]>();
+				myPositions = myPositions.Intersect(opponentStats.Select(myp => myp.Position).Distinct().ToList()).ToList();
+				List<string> myTeams = opponentStats.Select(s => s.Team.ToUpper()).Distinct().ToList();
+				foreach (string position in myPositions)
+				{
+					Dictionary<string, decimal> teamPts = new Dictionary<string, decimal>();
+					foreach (string myTeam in myTeams)
+					{
+						int weekCount = teamWeekCounts[myTeam];
+						decimal pts = opponentStats.Where(w => w.Position == position && w.Team == myTeam).Sum(d => d.Points);
+						teamPts.Add(myTeam, pts / weekCount);
+					}
+
+					if (teamPts.Count > 0)
+						myTeamsPointsDictionary.Add(position, teamPts.OrderBy(o => o.Value).Select(s => s.Key).ToArray());
+				}
+
+				//Save stats to Application scope
+				Common.Functions.SetWeeklyStats(new ApplicationWeeklyStats() { Website = "ESPN", LeagueId = leagueId, PositionStats = myTeamsPointsDictionary });
+			}
 		}
 	}
 }

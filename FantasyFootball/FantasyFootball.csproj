@@ -348,6 +348,7 @@
     <Content Include="Views\Espn\WeeklyRankingsPPR.cshtml" />
     <Content Include="Views\Database\UsaToday.cshtml" />
     <Content Include="Views\Yahoo\SoS.cshtml" />
+    <Content Include="Views\Espn\SoS.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -49,6 +49,30 @@ namespace FantasyFootball.Common
 			return Regex.Replace(html, @"<[^>]+>", string.Empty, RegexOptions.Singleline);
 		}
 
+		public static String RankSuffix(int rank)
+		{
+			switch (rank)
+			{
+				case 1:
+				case 21:
+				case 31:
+					return string.Format("{0}st", rank);
+					break;
+				case 2:
+				case 22:
+				case 32:
+					return string.Format("{0}nd", rank);
+					break;
+				case 3:
+				case 23:
+					return string.Format("{0}rd", rank);
+					break;
+				default:
+					return string.Format("{0}th", rank);
+					break;
+			}		
+		}
+
 		public static ApplicationWeeklyStats GetWeeklyStats(string website, string leagueId)
 		{
 			List<ApplicationWeeklyStats> applicationWeeklyStats = HttpContext.Current.Application["WeeklyStats"] as List<ApplicationWeeklyStats> ?? new List<ApplicationWeeklyStats>();

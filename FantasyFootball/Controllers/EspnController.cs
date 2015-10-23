@@ -99,6 +99,32 @@ namespace FantasyFootball.Controllers
 			return View(myLeagues);
 		}
 
+		public ActionResult WaiverWire()
+		{
+			List<Player> myPlayers = new List<Player>();
+			ApplicationWeeklyStats myStats = new ApplicationWeeklyStats();
+
+			if (Session["espn"] != null)
+			{
+				myPlayers = GetWaivers(Request.Params["leagueId"]);
+				myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				if (myStats == null)
+				{
+					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+					myStats = Common.Functions.GetWeeklyStats("ESPN", Request.Params["leagueId"]);
+				}
+			}
+			else
+				return RedirectToAction("ESPN", "Login");
+
+			ViewBag.Title = "Waiver Wire";
+			ViewBag.LeagueId = Request.Params["leagueId"];
+			ViewBag.TeamId = Request.Params["teamId"];
+			ViewBag.SeasonId = Request.Params["seasonId"];
+			ViewBag.WeeklyStats = myStats;
+			return View(myPlayers);
+		}
+
 		public ActionResult WeeklyRankingsPPR()
 		{
 			List<string> playerEspnIds = new List<string>(), playerCbsIds = new List<string>();
@@ -199,6 +225,55 @@ namespace FantasyFootball.Controllers
 				}
 			}
 
+			//Get the CBS images for the players
+			using (FantasyFootballEntities db = new FantasyFootballEntities())
+			{
+				List<string> espnIdList = (from p in myPlayers select p.PlayerId).ToList();
+				List<tbl_ff_players> playerEntityList = db.tbl_ff_players.Where(x => espnIdList.Contains(x.Espn) && x.Cbs != null).ToList();
+				foreach (tbl_ff_players entityPlayer in playerEntityList)
+				{
+					Player espnPlayer = (from p in myPlayers where p.PlayerId == entityPlayer.Espn select p).FirstOrDefault();
+					espnPlayer.PlayerAltId = entityPlayer.Cbs;
+				}
+			}
+
+			return myPlayers;
+		}
+
+		protected List<Player> GetWaivers(string leagueId)
+		{
+			List<Player> myPlayers = new List<Player>();
+			string html = Functions.GetHttpHtml(string.Format("http://games.espn.go.com/ffl/playertable/prebuilt/freeagency?leagueId={0}&=undefined&context=freeagency&view=overview&sortMap=AAAAARgAAAADAQAIY2F0ZWdvcnkDAAAAAwEABmNvbHVtbgMAAAAIAQAJZGlyZWN0aW9uA%2F%2F%2F%2F%2F8%3D&r=41671407&r=77879267", leagueId), (string)Session["espn"]);
+			MatchCollection myTRs = Regex.Matches(html, @"(?i)<tr[^>]+pncPlayerRow[^>]+>(?<Content>.*?)</tr>", RegexOptions.Singleline);
+			if (myTRs.Count > 0)
+			{
+				foreach (Match myTR in myTRs)
+				{
+					MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
+					if (myTDs.Count > 0)
+					{
+						Match playerMatch = Regex.Match(myTDs[0].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)""[^>]*>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{1,4})", RegexOptions.Singleline);
+						Match injuryMatch = Regex.Match(myTDs[0].Groups["Content"].Value, @"(?i)<span[^>]*>(?<Content>[^<]+)</span>", RegexOptions.Singleline);
+						Match opponentMatch = Regex.Match(myTDs[5].Groups["Content"].Value, @"(?i)<a\s+[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
+						
+						if (playerMatch.Success && opponentMatch.Success)
+						{
+							myPlayers.Add(new Player()
+							{
+								PlayerId = playerMatch.Groups["PlayerId"].Value,
+								Name = playerMatch.Groups["PlayerName"].Value
+								+ string.Format(" {0}%", Regex.Replace(Common.Functions.StripHtmlTags(myTDs[myTDs.Count - 2].Groups["Content"].Value), @"\.\d+", string.Empty))
+								+ (injuryMatch.Success ? string.Format(" - <span class=\"txRed\">{0}</span>", injuryMatch.Groups["Content"].Value) : string.Empty),
+								Position = playerMatch.Groups["Position"].Value,
+								Team = playerMatch.Groups["Team"].Value.ToLower(),
+								Opponent = Regex.Replace(opponentMatch.Groups["Opponent"].Value, @"(@|vs)", string.Empty).ToLower(),
+								Note01 = Common.Functions.StripHtmlTags(myTDs[2].Groups["Content"].Value) + " - " + Common.Functions.StripHtmlTags(myTDs[6].Groups["Content"].Value) + " " + (opponentMatch.Groups["Opponent"].Value.Contains("@") ? "@" : "vs")
+							});
+						}
+					}
+				}
+			}
+			
 			//Get the CBS images for the players
 			using (FantasyFootballEntities db = new FantasyFootballEntities())
 			{

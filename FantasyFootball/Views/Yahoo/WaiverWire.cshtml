@@ -34,7 +34,7 @@
 							</td>
 							<td width="40px">
 								<div class="teamIcon roundTopR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Player.Opponent.ToLower())" width="40" height="30" class="roundTopR" /></div>
-								<div class="txWhite txBold txCenter roundBottomR @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack"))">@myIndex</div>
+								<div class="txWhite txBold txCenter roundBottomR @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack"))">@FantasyFootball.Common.Functions.RankSuffix(myIndex)</div>
 							</td>
 						</tr>
 					</table>

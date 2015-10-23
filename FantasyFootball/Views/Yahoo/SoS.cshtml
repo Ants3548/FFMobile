@@ -47,7 +47,7 @@
 							<div class="rankRow roundTopL roundBottomL roundTopR roundBottomR">
 								<div class="teamBox" style="position: absolute; left: 0;">
 									<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", thisTeam.Team.ToLower())" width="40" height="30" class="roundTopL" /></div>
-									<div class="gdBlack txWhite txBold txCenter roundBottomL">@(i + 1)</div>
+									<div class="gdBlack txWhite txBold txCenter roundBottomL">@FantasyFootball.Common.Functions.RankSuffix(i + 1)</div>
 								</div>
 
 								@for (int m = 0; m < myMatchups.Count; m++)
@@ -67,7 +67,7 @@
 									isLast = (m == myMatchups.Count - 1 && week + m == lastWeek);
 									<div class="teamBox marginLeft">
 										<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", myOpponent.ToLower())" width="40" height="30" class="@(isLast ? "roundTopR" : "")" /></div>
-										<div class="txWhite txBold txCenter @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@myIndex</div>
+										<div class="txWhite txBold txCenter @(myIndex <= 10 ? "gdRed" : (myIndex >= 23 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@FantasyFootball.Common.Functions.RankSuffix(myIndex)</div>
 									</div>
 
 									if (m == myMatchups.Count - 1 && week + m != lastWeek) //Bye week is the last result

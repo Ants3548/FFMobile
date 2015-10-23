@@ -1,4 +1,4 @@
-﻿@model Dictionary<string, SortedList<decimal, string>>
+﻿@model FantasyFootball.Common.ApplicationWeeklyStats
 
 @section HeadCSS
 {
@@ -12,12 +12,12 @@
 
 @{if (Model != null)
 	{
-		List<string> myTeams = Model.Values.First().Values.ToList(); //Model.Select(myp => myp.Team).Distinct().ToList();
-		int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.myMatchups).Select(s => s.Week).Distinct().Last();
-		foreach (KeyValuePair<string, SortedList<decimal, string>> myPosition in Model)
+		List<string> myTeams = Model.PositionStats.Values.First().ToList(); //Model.Select(myp => myp.Team).Distinct().ToList();
+		int lastWeek = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Select(s => s.Week).Distinct().Last();
+		foreach (string myPosition in Model.PositionStats.Keys)
 		{
-			SortedList<decimal, string> myStats = myPosition.Value;
-			if(myStats.Count > 0)
+			string[] myStats = Model.PositionStats[myPosition];
+			if(myStats.Length > 0)
 			{
 			<div data-role="page" id="@string.Format("{0}-page", myPosition)">
 				<div data-role="header">
@@ -30,19 +30,20 @@
 						foreach (string team in myTeams)
 						{
 							decimal pts = 0;
-							List<FantasyFootball.DAL.tbl_ff_matchups> matches = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.myMatchups).Where(m => (m.AwayTeam == team.ToUpper() || m.HomeTeam == team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+							List<FantasyFootball.DAL.tbl_ff_matchups> matches = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == team.ToUpper() || m.HomeTeam == team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
 							foreach (FantasyFootball.DAL.tbl_ff_matchups match in matches)
 							{
-								pts += myStats.Where(w => w.Value.ToUpper() == (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam)).Select(s => s.Key).Single();
+								pts += Array.IndexOf(myStats, (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam));
+								//pts += myStats.Where(w => w.Value.ToUpper() == (match.HomeTeam != team.ToUpper() ? match.HomeTeam : match.AwayTeam)).Select(s => s.Key).Single();
 							}
-							teams.Add(new FantasyFootball.Models.TeamWeeklyStats() { Team = team.ToLower(), Points = (pts / matches.Count) });
+							teams.Add(new FantasyFootball.Models.TeamWeeklyStats() { Team = team.ToLower(), Points = pts });
 						}
 
 						teams = teams.OrderByDescending(o => o.Points).ToList();
 						for (int i = 0; i < teams.Count; i++)
 						{
 							FantasyFootball.Models.TeamWeeklyStats thisTeam = teams[i];
-							List<FantasyFootball.DAL.tbl_ff_matchups> myMatchups = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.myMatchups).Where(m => (m.AwayTeam == thisTeam.Team.ToUpper() || m.HomeTeam == thisTeam.Team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
+							List<FantasyFootball.DAL.tbl_ff_matchups> myMatchups = ((List<FantasyFootball.DAL.tbl_ff_matchups>)ViewBag.Matchups).Where(m => (m.AwayTeam == thisTeam.Team.ToUpper() || m.HomeTeam == thisTeam.Team.ToUpper()) && m.Week >= ViewBag.Week).OrderBy(o => o.Week).ToList();
 							int week = ViewBag.Week; bool isLast;
 							<div class="rankRow roundTopL roundBottomL roundTopR roundBottomR">
 								<div class="teamBox" style="position: absolute; left: 0;">
@@ -54,8 +55,8 @@
 								{
 									FantasyFootball.DAL.tbl_ff_matchups match = myMatchups[m];
 									string myOpponent = (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam);
-									int myIndex = myPosition.Value.IndexOfValue(myOpponent); //myStats.Where(w => w.Value.ToUpper() == (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam)).SingleOrDefault();
-									if (week + m != match.Week) //Bye week occurred
+									int myIndex = Array.IndexOf(myStats, myOpponent) + 1; //myPosition.Value.IndexOfValue(myOpponent); //myStats.Where(w => w.Value.ToUpper() == (thisTeam.Team.ToUpper() == match.HomeTeam ? match.AwayTeam : match.HomeTeam)).SingleOrDefault();
+                                    if (week + m != match.Week) //Bye week occurred
 									{
 										week += 1;
 										<div class="teamBox marginLeft">
@@ -67,7 +68,7 @@
 									isLast = (m == myMatchups.Count - 1 && week + m == lastWeek);
 									<div class="teamBox marginLeft">
 										<div class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", myOpponent.ToLower())" width="40" height="30" class="@(isLast ? "roundTopR" : "")" /></div>
-										<div class="txWhite txBold txCenter @(myIndex <= 9 ? "gdRed" : (myIndex >= 22 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@(myIndex + 1)</div>
+										<div class="txWhite txBold txCenter @(myIndex <= 9 ? "gdRed" : (myIndex >= 22 ? "gdGreen" : "gdBlack")) @(isLast ? "roundBottomR" : "")">@myIndex</div>
 									</div>
 
 									if (m == myMatchups.Count - 1 && week + m != lastWeek) //Bye week is the last result
@@ -85,9 +86,9 @@
 				<div data-role="footer" data-position="fixed">
 					<div data-role="navbar" class="ui-state-persist">
 						<ul>
-							@foreach (string myPos in Model.Keys)
+							@foreach (string myPos in Model.PositionStats.Keys)
 							{
-								<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition.Key == myPos ? "ui-btn-active" : "")">@myPos</a></li>
+								<li><a href="@string.Format("#{0}-page", myPos)" class="@(myPosition == myPos ? "ui-btn-active" : "")">@myPos</a></li>
 							}
 						</ul>
 					</div><!-- /navbar -->

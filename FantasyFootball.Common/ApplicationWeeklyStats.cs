@@ -9,14 +9,14 @@ namespace FantasyFootball.Common
 	{
 		public string Website { get; set; }
 		public string LeagueId { get; set; }
-		public Dictionary<string, SortedList<decimal, string>> PositionStats { get; set; }
+		public Dictionary<string, string[]> PositionStats { get; set; }
 
 		public int GetTeamRank(string position, string team)
 		{
-			SortedList<decimal, string> positionStats;
+			string[] positionStats;
 			if (PositionStats.TryGetValue(position, out positionStats))
 			{
-				return positionStats.IndexOfValue(team);
+				return Array.IndexOf(positionStats, team) + 1;
 			}
 			else
 			{

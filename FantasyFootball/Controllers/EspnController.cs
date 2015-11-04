@@ -202,7 +202,7 @@ namespace FantasyFootball.Controllers
 							MatchCollection myTDs = Regex.Matches(myTR.Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
 							if (myTDs.Count > 0)
 							{
-								Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)""[^>]*>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{2,4})", RegexOptions.Singleline);
+								Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)playerid=""(?<PlayerId>\d+)""[^>]*>(?<PlayerName>[^<]+)</a>\W+(?<Team>\w{2,3})&nbsp;(?<Position>\w{1,4})", RegexOptions.Singleline);
 								Match opponentMatch = Regex.Match(myTDs[(isEditPage ? 4 : 3)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Opponent>[^<]+)</a>", RegexOptions.Singleline);
 								Match opponentRankMatch = Regex.Match(myTDs[(isEditPage ? 13 : 12)].Groups["Content"].Value, @"(?i)<a[^>]+?>(?<Content>.*?)</a>", RegexOptions.Singleline);
 								Match noteMatch = Regex.Match(myTDs[(isEditPage ? 5 : 4)].Groups["Content"].Value, @"(?i)<a[^>]+>(?<Content>[^<]+)</a>", RegexOptions.Singleline);

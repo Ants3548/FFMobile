@@ -22,46 +22,40 @@ namespace FantasyFootball.Controllers
 
 		public static Dictionary<string, List<Ranking>> GetRankingsWeeklyPPR(List<string> playerIds)
 		{
-			string html = Functions.GetHttpHtml("http://fantasynews.cbssports.com/fantasyfootball/rankings/weekly/ppr", null);
-			Match htmlMatch = Regex.Match(html, @"(?i)<table\s+class=""data""\s+width=""100%"">.*?</table>", RegexOptions.Singleline);
-			Dictionary<string, List<Ranking>> rankings = new Dictionary<string, List<Ranking>>();			
+			List<string> myPositions = new List<string>() { "QB", "RB", "WR", "TE", "DST" };			
+			Dictionary<string, List<Ranking>> rankings = new Dictionary<string, List<Ranking>>();
 
-			if (htmlMatch.Success)
+			foreach(string myPosition in myPositions)
 			{
-				MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)<tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
-				if (myTRs.Count > 0)
+				rankings.Add(myPosition, new List<Ranking>());
+				string html = Functions.GetHttpHtml(string.Format("http://www.cbssports.com/fantasy/football/rankings/ppr/{0}/weekly/", myPosition), null);
+				Match htmlMatch = Regex.Match(html, @"(?i)rankings-tbl-data-inner.*?</table>", RegexOptions.Singleline);
+
+				if (htmlMatch.Success)
 				{
-					string keyName = string.Empty;
-					foreach (Match myTR in myTRs)
+					MatchCollection myTRs = Regex.Matches(htmlMatch.Value, @"(?i)ranking-tbl-data-inner-tr[^>]*>(?<Content>.*?)</tr>", RegexOptions.Singleline);
+					if (myTRs.Count > 0)
 					{
-						MatchCollection myTDs = Regex.Matches(myTR.Groups["Content"].Value, @"(?i)<td[^>]*>(?<Content>.*?)</td>", RegexOptions.Singleline);
-						if (myTDs.Count > 0)
+						foreach (Match myTR in myTRs)
 						{
-							switch (myTDs.Count)
+							Match playerMatch = Regex.Match(myTR.Groups["Content"].Value, @"/fantasy/football/players/(?<PlayerId>\d+)/[^>]+>(?<PlayerName>[^<]+)</a>.*?rank-team-span[^>]+>(?<PlayerTeam>[^<]+)</span>.*?<span>(?<Opponent>[^<]+)</span>", RegexOptions.Singleline);
+							if (playerMatch.Success)
 							{
-								case 1:
-									keyName = myTDs[0].Groups["Content"].Value;
-									rankings.Add(keyName, new List<Ranking>());
-									break;
-								case 2:
-									Match playerMatch = Regex.Match(myTDs[1].Groups["Content"].Value, @"(?i)^<a[^>]+?playerpage/(?<PlayerId>\d+)[^>]+>(?<PlayerName>[^<]+)</a>\s*(?<PlayerTeam>[^&\s]+).*?\((@|vs\.\s+)(?<Opponent>\w+)\)", RegexOptions.Singleline);
-									if (playerMatch.Success)
-									{
-										rankings[keyName].Add(new Ranking()
-										{
-											Name = playerMatch.Groups["PlayerName"].Value,
-											Opponent = playerMatch.Groups["Opponent"].Value,
-											Team = playerMatch.Groups["PlayerTeam"].Value,
-											Rank = rankings[keyName].Count + 1,
-											Active = ((playerIds.Contains(playerMatch.Groups["PlayerId"].Value)) ? false : true)
-										});
-									}
-									break;
+								rankings[myPosition].Add(new Ranking()
+								{
+									Id = playerMatch.Groups["PlayerId"].Value,
+									Name = playerMatch.Groups["PlayerName"].Value,
+									Opponent = playerMatch.Groups["Opponent"].Value.Replace("@", string.Empty),
+									Team = playerMatch.Groups["PlayerTeam"].Value,
+									Rank = rankings[myPosition].Count + 1,
+									Position = myPosition,
+									Active = ((playerIds.Contains(playerMatch.Groups["PlayerId"].Value)) ? false : true)
+								});
 							}
 						}
 					}
 				}
-			}
+			}			
 
 			return rankings;
 		}

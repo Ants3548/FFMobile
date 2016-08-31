@@ -41,6 +41,6 @@
 .smIco_dal { background-image: url(/Content/images/icons/teams/60x45/dal.jpg); }
 
 .smIco_ari { background-image: url(/Content/images/icons/teams/60x45/ari.jpg); }
-.smIco_stl { background-image: url(/Content/images/icons/teams/60x45/stl.jpg); }
+.smIco_stl, .smIco_lar { background-image: url(/Content/images/icons/teams/60x45/stl.jpg); }
 .smIco_sea { background-image: url(/Content/images/icons/teams/60x45/sea.jpg); }
 .smIco_sf { background-image: url(/Content/images/icons/teams/60x45/sf.jpg); }

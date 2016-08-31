@@ -14,7 +14,7 @@
     <RootNamespace>FantasyFootball</RootNamespace>
     <AssemblyName>FantasyFootball</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -175,6 +175,7 @@
     <Content Include="Content\images\icons\teams\40x30\sd.jpg" />
     <Content Include="Content\images\icons\teams\40x30\sea.jpg" />
     <Content Include="Content\images\icons\teams\40x30\sf.jpg" />
+    <Content Include="Content\images\icons\teams\40x30\lar.jpg" />
     <Content Include="Content\images\icons\teams\40x30\stl.jpg" />
     <Content Include="Content\images\icons\teams\40x30\tb.jpg" />
     <Content Include="Content\images\icons\teams\40x30\ten.jpg" />
@@ -209,6 +210,7 @@
     <Content Include="Content\images\icons\teams\60x45\sd.jpg" />
     <Content Include="Content\images\icons\teams\60x45\sea.jpg" />
     <Content Include="Content\images\icons\teams\60x45\sf.jpg" />
+    <Content Include="Content\images\icons\teams\60x45\lar.jpg" />
     <Content Include="Content\images\icons\teams\60x45\stl.jpg" />
     <Content Include="Content\images\icons\teams\60x45\tb.jpg" />
     <Content Include="Content\images\icons\teams\60x45\ten.jpg" />
@@ -243,6 +245,7 @@
     <Content Include="Content\images\icons\teams\80x60\sd.jpg" />
     <Content Include="Content\images\icons\teams\80x60\sea.jpg" />
     <Content Include="Content\images\icons\teams\80x60\sf.jpg" />
+    <Content Include="Content\images\icons\teams\80x60\lar.jpg" />
     <Content Include="Content\images\icons\teams\80x60\stl.jpg" />
     <Content Include="Content\images\icons\teams\80x60\tb.jpg" />
     <Content Include="Content\images\icons\teams\80x60\ten.jpg" />
@@ -390,7 +393,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>49904</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:85/</IISUrl>
+          <IISUrl>http://localhost:49904/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

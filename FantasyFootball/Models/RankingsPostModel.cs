@@ -10,6 +10,7 @@ namespace FantasyFootball.Models
         public string Author { get; set; }
         public string TimeStamp { get; set; }
         public string Thumbnail { get; set; }
-        public List<Ranking> Rankings { get; set; }
+		public string Twitter { get; set; }
+		public List<Ranking> Rankings { get; set; }
     }
 }

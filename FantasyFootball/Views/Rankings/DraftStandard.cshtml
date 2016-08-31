@@ -1,5 +1,6 @@
-﻿@{
-	ViewBag.Title = "Draft Rankings";
+﻿@using System.Text.RegularExpressions;
+@{
+	ViewBag.Title = "Standard Draft Rankings";
 }
 
 @section HeadCSS
@@ -10,23 +11,51 @@
 	<link href="~/Content/mobile.css" rel="stylesheet" />
 }
 
-<div data-role="page">
-	<div data-role="header">
-		<h1>@ViewBag.Title</h1>
+@*@foreach (FantasyFootball.Models.RankingsPost Writer in Model)*@
+@for (int i = 0; i < Model.Count; i++)
+{
+	FantasyFootball.Models.RankingsPost Writer = Model[i]; 
+	<div data-role="page" id="writer_@i">
+		<div data-role="header">
+			<h1>@ViewBag.Title</h1>
+		</div>
+
+		<div data-role="content">
+			<p align="center">
+				<img src="@Writer.Thumbnail" />
+			</p>
+			<p align="center">
+				<b>@Writer.Author</b><br />
+				<twitter>@Writer.Twitter</twitter><br />
+				@Writer.TimeStamp
+			</p>
+			
+			@foreach (FantasyFootball.Models.Ranking Rank in Writer.Rankings)
+			{
+				<ul class="playerRank">
+					<li class="name gdWhite"><a class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</a></li>
+					<li class="pick gdBlack txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+					<li class="team">
+						<ul class="playerRole">
+							<li class="teamIcon smIco_@Rank.Team.ToLower()"></li>
+							<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
+						</ul>
+					</li>
+				</ul>
+			}
+		</div>
+
+		<div data-role="footer" data-id="footer-nav" data-position="fixed">
+			<div data-role="navbar">
+				<ul>
+					@for (int j = 0; j < Model.Count; j++)
+					{
+						FantasyFootball.Models.RankingsPost Author = Model[j];
+						Match firstName = Regex.Match(Author.Author, @"^\w+", RegexOptions.Singleline);
+						<li><a href="#writer_@j" class="@((i == j) ? "ui-btn-active" : string.Empty)">@firstName.Value</a></li>
+					}
+				</ul>
+			</div>
+		</div>
 	</div>
-	<div data-role="content">
-		@foreach (FantasyFootball.Models.Ranking Rank in Model)
-		{
-			<ul class="playerRank">
-				<li class="name gdWhite"><a class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</a></li>
-				<li class="pick gdBlack txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
-				<li class="team">
-					<ul class="playerRole">
-						<li class="teamIcon smIco_@Rank.Team.ToLower()"></li>
-						<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
-					</ul>
-				</li>
-			</ul>
-		}
-	</div>
-</div>
+}

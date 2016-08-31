@@ -32,29 +32,55 @@ namespace FantasyFootball.Controllers
 			WebClient client = new WebClient();
 			client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
 
-			Stream data = client.OpenRead("http://fantasynews.cbssports.com/fantasyfootball/rankings/top200/yearly");
+			Stream data = client.OpenRead("http://www.cbssports.com/fantasy/football/rankings/standard/top200/yearly/");
 			StreamReader reader = new StreamReader(data);
 			string s = reader.ReadToEnd();
 			data.Close();
 			reader.Close();
 
-			MatchCollection myWriters = Regex.Matches(s, @"<table[^>]+?class=""data"".*?</table>", RegexOptions.Singleline);
-			List<Ranking> myRankings = new List<Ranking>();
+			//Get the Writers and details
+			List<RankingsPost> myRankings = new List<RankingsPost>();
+			Match writersMatch = Regex.Match(s, @"(?i)<div\s+id=""experts"">.*?</article>", RegexOptions.Singleline);			
+			MatchCollection myWriters = Regex.Matches(writersMatch.Value, @"class=""rankings-author"".*?</time>", RegexOptions.Singleline);
+			MatchCollection playersMatch = Regex.Matches(s, @"id=""rankings-table"".*?</table>", RegexOptions.Singleline);
 
-			if (myWriters.Count > 0)
+            for (int i = 0; i < myWriters.Count; i++) //(Match myWriter in myWriters)
 			{
-				MatchCollection myRanks = Regex.Matches(myWriters[1].Value, @"(?i)<td[^>]*><a[^>]+>(?<Name>.*?)</a>\s+(?<Team>\w+),\s+(?<Position>\w+)", RegexOptions.Singleline);
-				for (int i = 0; i < myRanks.Count - 1; i++)
+				Match myWriter = myWriters[i];
+                RankingsPost myRankingPost = new RankingsPost();
+
+				Match imageMatch = Regex.Match(myWriter.Value, @"(?i)<img\s+src=""(?<Image>[^""]+)""", RegexOptions.Singleline);
+				myRankingPost.Thumbnail = imageMatch.Groups["Image"].Value.Trim();
+
+				Match authorMatch = Regex.Match(myWriter.Value, @"(?i)rel=""author"".*?>(?<Author>[^<]+)</a>", RegexOptions.Singleline);
+				myRankingPost.Author = authorMatch.Groups["Author"].Value.Trim();
+
+				Match twitterMatch = Regex.Match(myWriter.Value, @"(?i)class=""twitter"".*?>(?<Twitter>[^<]+)</span>", RegexOptions.Singleline);
+				myRankingPost.Twitter = twitterMatch.Groups["Twitter"].Value.Trim();
+
+				Match timeMatch = Regex.Match(myWriter.Value, @"(?i)<time[^>]+>(?<Time>[^<]+)</time>", RegexOptions.Singleline);
+				myRankingPost.TimeStamp = timeMatch.Groups["Time"].Value.Trim();
+
+				List<Ranking> myPlayerRankings = new List<Ranking>();
+				MatchCollection myRanks = Regex.Matches(playersMatch[i].Value, @"(?i)<td\s+class=""player-info""[^>]*>(?<Html>.*?)</td>", RegexOptions.Singleline);
+				for(int j = 0; j < myRanks.Count; j++)
 				{
-					Match myMatch = myRanks[i];
-					myRankings.Add(new Ranking()
+					Match rank = myRanks[j];
+					Match myName = Regex.Match(rank.Groups["Html"].Value, @"<a\s+href=""/fantasy/football/players/[^>]+>(?<Html>\w.*?)</a>", RegexOptions.Singleline);
+					Match myTeamAndPos = Regex.Match(rank.Groups["Html"].Value, @"<span\s+class=""rank-team-span""[^>]*>(?<Html>.*?)</span>", RegexOptions.Singleline);
+					string[] values = myTeamAndPos.Groups["Html"].Value.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					Ranking myRanking = new Ranking()
 					{
-						Name = myMatch.Groups["Name"].Value,
-						Position = myMatch.Groups["Position"].Value,
-						Team = myMatch.Groups["Team"].Value,
-						Rank = i + 1
-					});
-				}
+						Rank = j + 1,
+                        Name = myName.Groups["Html"].Value.Trim(),
+						Team = values[0],
+						Position = values[1]
+					};
+					myPlayerRankings.Add(myRanking);
+                }
+
+				myRankingPost.Rankings = myPlayerRankings;
+				myRankings.Add(myRankingPost);
 			}
 
 			return View(myRankings);

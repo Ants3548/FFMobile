@@ -37,23 +37,15 @@ warning 6002: The table/view 'FantasyFootball.dbo.tbl_ff_weeks' does not have a 
         <EntityType Name="tbl_ff_weeks">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="StartDate" />
-            <PropertyRef Name="EndDate" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="StartDate" Type="datetime" Nullable="false" />
-          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityContainer Name="FantasyFootballModelStoreContainer">
           <EntitySet Name="tbl_ff_matchups" EntityType="Self.tbl_ff_matchups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tbl_ff_players" EntityType="Self.tbl_ff_players" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tbl_ff_weeks" EntityType="Self.tbl_ff_weeks" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-[tbl_ff_weeks].[Id] AS [Id], 
-[tbl_ff_weeks].[StartDate] AS [StartDate], 
-[tbl_ff_weeks].[EndDate] AS [EndDate]
-FROM [dbo].[tbl_ff_weeks] AS [tbl_ff_weeks]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="tbl_ff_weeks" EntityType="Self.tbl_ff_weeks" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -94,12 +86,10 @@ FROM [dbo].[tbl_ff_weeks] AS [tbl_ff_weeks]</DefiningQuery>
         <EntityType Name="tbl_ff_weeks">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="StartDate" />
-            <PropertyRef Name="EndDate" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>

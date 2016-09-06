@@ -408,15 +408,39 @@ namespace FantasyFootball.Controllers
 									{
 										HomeTeam = myTeams[1].Groups["Team"].Value.Trim(),
 										AwayTeam = myTeams[0].Groups["Team"].Value.Trim(),
-										Season = 2015,
+										Season = myYear,
 										Week = i,
-										Date = DateTime.Parse(string.Format("{0}, 2015 {1}", Regex.Replace(myTable.Groups["Date"].Value, @"\w{2}$", string.Empty, RegexOptions.Singleline), time))
+										Date = DateTime.Parse(string.Format("{0}, {2} {1}", Regex.Replace(myTable.Groups["Date"].Value, @"\w{2}$", string.Empty, RegexOptions.Singleline), time, myYear))
 									});
 								}								
 							}
 						}
 					}			
 				}				
+			}
+
+			db.SaveChanges();
+
+			return View();
+		}
+
+		public ActionResult YearlyWeeks()
+		{
+			FantasyFootballEntities db = new FantasyFootballEntities();
+			DateTime mySeasonStartDate = new DateTime(2016, 9, 6);
+
+			for (int i = 0; i < 17; i++)
+			{
+				DateTime myWeekStartDate = mySeasonStartDate.AddDays(i * 7);
+				DateTime myWeekEndDate = myWeekStartDate.AddDays(7);
+				myWeekEndDate = myWeekEndDate.AddTicks(-1);
+
+				db.tbl_ff_weeks.Add(new tbl_ff_weeks()
+				{
+					Id = i + 1,
+					StartDate = myWeekStartDate,
+					EndDate = myWeekEndDate
+				});
 			}
 
 			db.SaveChanges();

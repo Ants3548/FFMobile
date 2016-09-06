@@ -353,6 +353,7 @@
     <Content Include="Views\Yahoo\SoS.cshtml" />
     <Content Include="Views\Espn\SoS.cshtml" />
     <Content Include="Views\Espn\WaiverWire.cshtml" />
+    <Content Include="Views\Database\YearlyWeeks.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

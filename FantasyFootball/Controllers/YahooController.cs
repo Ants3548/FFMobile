@@ -173,7 +173,7 @@ namespace FantasyFootball.Controllers
 				MatchCollection links = Regex.Matches(myTeam.Value, @"(?i)<a\s+[^>]+>.*?</a>", RegexOptions.Singleline);
 				if (links.Count == 2)
 				{
-					Match teamLink = Regex.Match(links[0].Value, @"(?i)<a.*?href=""http://football.fantasysports.yahoo.com/f1/(?<LeagueId>\d+)/(?<TeamId>\d+)""[^>]*>(?<TeamName>[^<]+)</a>", RegexOptions.Singleline);
+					Match teamLink = Regex.Match(links[0].Value, @"(?i)<a.*?href=""[^""]*?f1/(?<LeagueId>\d+)/(?<TeamId>\d+)""[^>]*>(?<TeamName>[^<]+)</a>", RegexOptions.Singleline);
 					Match leagueLink = Regex.Match(links[1].Value, @"(?i)<a\s+[^>]+>(?<LeagueName>[^<]+)</a>", RegexOptions.Singleline);
 
 					if (teamLink.Success && leagueLink.Success)

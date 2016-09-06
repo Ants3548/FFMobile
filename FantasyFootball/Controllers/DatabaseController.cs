@@ -376,12 +376,13 @@ namespace FantasyFootball.Controllers
 		public ActionResult UsaToday()
 		{
 			FantasyFootballEntities db = new FantasyFootballEntities();
+			int myYear = DateTime.Now.Year;
 
 			for (int i = 1; i < 17; i++)
 			{
 				WebClient myclient = new WebClient();
 				myclient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-				Stream mydata = myclient.OpenRead(string.Format("http://www.usatoday.com/sports/nfl/schedule/2015/season-regular/{0}/", i));
+				Stream mydata = myclient.OpenRead(string.Format("http://www.usatoday.com/sports/nfl/schedule/{1}/season-regular/{0}/", i, myYear));
 				StreamReader myreader = new StreamReader(mydata);
 				string html = myreader.ReadToEnd();
 				mydata.Close();

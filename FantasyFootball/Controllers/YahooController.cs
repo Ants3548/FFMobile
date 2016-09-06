@@ -62,11 +62,11 @@ namespace FantasyFootball.Controllers
 			if (Session["yahoo"] != null)
 			{
 				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"]);
-				myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
 				if (myStats == null)
 				{
 					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
-					myStats = Common.Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+					myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
 				}
 			}				
 			else
@@ -213,7 +213,8 @@ namespace FantasyFootball.Controllers
 							if (hrefMatches.Count > 0)
 							{
 								Match playerMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)ysf-player-name.*?http://sports.yahoo.com/nfl/(players|teams)/(?<PlayerId>[^""]+)[^>]+>(?<PlayerName>[^<]+)</a>.*?(?<Team>\w{2,3})\s+\-\s+(?<Position>\w{1,3})</span>", RegexOptions.Singleline);
-								Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count - 1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)<a[^>]+>(?<Opponent>\w+)$", RegexOptions.Singleline);
+								Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count - 1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)\s(?<Opponent>\w+)$", RegexOptions.Singleline);
+								//Match opponentMatch = Regex.Match(hrefMatches[hrefMatches.Count - 1].Groups["Content"].Value, @"(?i)^(?<Note>[^<]+)<a[^>]+>(?<Opponent>\w+)$", RegexOptions.Singleline);
 								Match injuryMatch = Regex.Match(myTDs[(isEditPage ? 2 : 1)].Groups["Content"].Value, @"(?i)F-injury[^>]+>(?<InjuryStatus>[^<]+)</span>", RegexOptions.Singleline);
 								if (playerMatch.Success)
 								{

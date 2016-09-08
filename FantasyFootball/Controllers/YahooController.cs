@@ -141,7 +141,7 @@ namespace FantasyFootball.Controllers
 			{
 				string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/starters", Request.Params["leagueId"]), (string)Session["yahoo"]);
 				
-				MatchCollection players = Regex.Matches(html, @"(?i)/nfl/players/(?<PlayerId>\d+)""", RegexOptions.Singleline);
+				MatchCollection players = Regex.Matches(html, @"(?i)/nfl/(players|teams)/(?<PlayerId>[\w\d]+)""", RegexOptions.Singleline);
 				if (players.Count > 0)
 				{
 					foreach (Match player in players)

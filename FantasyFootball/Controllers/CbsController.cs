@@ -41,7 +41,7 @@ namespace FantasyFootball.Controllers
 				{
 					Match myRankTable = myRankTableMatches[i];
 					List<Ranking> myTableRankings = new List<Ranking>();
-					MatchCollection myPlayers = Regex.Matches(myRankTable.Groups["Html"].Value, @"(?i)/fantasy/football/players/(?<PlayerId>\d+)/[^>]*>(?<PlayerName>\w.*?)</a>.*?<span[^>]+>(?<PlayerTeam>[^<]+)", RegexOptions.Singleline);
+					MatchCollection myPlayers = Regex.Matches(myRankTable.Groups["Html"].Value, @"(?i)/fantasy/football/players/(?<PlayerId>\d+)/[^>]*>(?<PlayerName>[^<]+?)</a>.*?<span[^>]+>(?<PlayerTeam>[^<]+)", RegexOptions.Singleline);
 
 					for(int j = 0; j < myPlayers.Count; j++)
 					{

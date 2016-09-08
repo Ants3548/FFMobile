@@ -44,7 +44,7 @@
 				<div class="ranking-section" data-position-type="@PosRankings.Key" style="@(PosRankings.Key == Writer.MultiPartRankings.Keys.First() ? string.Empty : "display: none;")">
 					@foreach (Ranking Rank in PosRankings.Value)
 					{
-						<ul class=" playerRank">
+						<ul data-player-id="@Rank.Id" class="playerRank">
 							<li class="name gdWhite"><span>@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</span></li>
 							<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") pick txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
 							<li class="team">

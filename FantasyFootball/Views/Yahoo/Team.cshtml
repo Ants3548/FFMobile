@@ -1,4 +1,4 @@
-﻿@model List<FantasyFootball.Models.Player>
+﻿@model List<Player>
 
 @section HeadCSS
 {
@@ -18,7 +18,7 @@
 	<div data-role="content">
 		@{if (Model != null)
 			{
-				foreach (FantasyFootball.Models.Player Player in Model)
+				foreach (Player Player in Model)
 				{
 					<div style="margin-bottom: 0.5em; background-color: #fff; border: solid 1px #ddd;" class="roundTopL roundBottomL roundTopR roundBottomR">
 						<table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -28,8 +28,22 @@
 										int myIndex = 0;
 										if(ViewBag.WeeklyStats != null)
 										{
-											myIndex = Array.IndexOf(((ApplicationWeeklyStats)ViewBag.WeeklyStats).PositionStats[Player.Position], Player.Opponent.ToUpper()) + 1;
-                                        }
+											ApplicationWeeklyStats myStats = ViewBag.WeeklyStats as ApplicationWeeklyStats;
+											if(myStats != null)
+											{
+												if (myStats.PositionStats != null)
+												{
+													try
+													{
+														myIndex = Array.IndexOf((myStats).PositionStats[Player.Position], Player.Opponent.ToUpper()) + 1;
+													}
+													catch (Exception ex)
+													{
+														myIndex = 16;
+													}
+												}
+											}
+										}
 
 										if (Player.Position != "DEF")
 										{

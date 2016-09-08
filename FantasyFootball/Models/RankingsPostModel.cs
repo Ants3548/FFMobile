@@ -12,5 +12,6 @@ namespace FantasyFootball.Models
         public string Thumbnail { get; set; }
 		public string Twitter { get; set; }
 		public List<Ranking> Rankings { get; set; }
-    }
+		public Dictionary<string, List<Ranking>> MultiPartRankings { get; set; }
+	}
 }

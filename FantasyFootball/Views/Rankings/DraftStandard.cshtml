@@ -1,5 +1,5 @@
 ﻿@{
-	ViewBag.Title = "Standard Draft Rankings";
+	ViewBag.Title = "Standard Rankings";
 }
 
 @section HeadCSS
@@ -10,10 +10,9 @@
 	<link href="~/Content/mobile.css" rel="stylesheet" />
 }
 
-@*@foreach (FantasyFootball.Models.RankingsPost Writer in Model)*@
 @for (int i = 0; i < Model.Count; i++)
 {
-	FantasyFootball.Models.RankingsPost Writer = Model[i]; 
+	RankingsPost Writer = Model[i]; 
 	<div data-role="page" id="writer_@i">
 		<div data-role="header">
 			<h1>@ViewBag.Title</h1>
@@ -27,14 +26,14 @@
 				<span style="color: #999; display: block; text-align: center;">@Writer.TimeStamp</span>
 			</div>			
 			
-			@foreach (FantasyFootball.Models.Ranking Rank in Writer.Rankings)
+			@foreach (Ranking Rank in Writer.Rankings)
 			{
 				<ul class="playerRank">
 					<li class="name gdWhite"><span>@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</span></li>
 					<li class="pick gdBlack txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
 					<li class="team">
 						<ul class="playerRole">
-							<li class="teamIcon smIco_@Rank.Team.ToLower()"></li>
+							<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
 							<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
 						</ul>
 					</li>
@@ -47,7 +46,7 @@
 				<ul>
 					@for (int j = 0; j < Model.Count; j++)
 					{
-						FantasyFootball.Models.RankingsPost Author = Model[j];
+						RankingsPost Author = Model[j];
 						Match firstName = Regex.Match(Author.Author, @"^\w+", RegexOptions.Singleline);
 						<li><a href="#writer_@j" class="@((i == j) ? "ui-btn-active  ui-state-persist" : string.Empty)" data-transition="none">@firstName.Value</a></li>
 					}

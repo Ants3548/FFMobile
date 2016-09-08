@@ -1,36 +1,75 @@
-﻿@model Dictionary<string, List<FantasyFootball.Models.Ranking>>
+﻿@model List<RankingsPost>
 
-@foreach (KeyValuePair<string, List<FantasyFootball.Models.Ranking>> myEntry in Model)
+@section BodyScripts
 {
-	<div data-role="page" id="@string.Format("{0}-page", myEntry.Key.ToLower())">
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('fieldset').on('change', 'input[type=radio]', function () {
+				$(this).closest('div[data-role="page"]').find('.ranking-section').hide();
+				$(this).closest('div[data-role="page"]').find('div[data-position-type="' + $(this).val() + '"]').show();
+			});
+		});
+	</script>
+}
+
+@for (int i = 0; i < Model.Count; i++)
+{
+	RankingsPost Writer = Model[i];
+	<div data-role="page" id="writer_@i">
 		<div data-role="header">
-			<h1>PPR Rankings - @myEntry.Key</h1>
-			@Html.Partial("~/Views/Yahoo/_Menu.cshtml")
+			<h1>@ViewBag.Title</h1>
 		</div>
-		<div role="main" class="ui-content">
-			@foreach (FantasyFootball.Models.Ranking Rank in myEntry.Value)
+
+		<div data-role="content">
+			<div style="margin-bottom: 1em; text-align: center;">
+				<img src="@Writer.Thumbnail" style="display: inline-block; margin: 2px auto;" /><br />
+				<h3 style="margin: 2px auto; text-align: center;">@Writer.Author</h3>
+				@*<twitter>@Writer.Twitter</twitter><br />*@
+				<span style="color: #999; display: block; text-align: center;">@Writer.TimeStamp</span>
+			</div>
+
+			<fieldset data-role="controlgroup" data-type="horizontal" style="text-align: center; margin-bottom: 1em;">
+				@for (int b = 0; b < Writer.MultiPartRankings.Count; b++)
+				{
+					string myPos = Writer.MultiPartRankings.Keys.ElementAt(b);
+					string myId = string.Format("radio-choice-{0}-{1}", i, myPos);
+
+					<input type="radio" name="@string.Format("radio-choices-{0}", i)" id="@myId" value="@myPos" @(b == 0 ? @"checked=""checked""" : string.Empty)>
+					<label for="@myId">@myPos</label>
+				}
+			</fieldset>
+
+			@foreach (KeyValuePair<string, List<Ranking>> PosRankings in Writer.MultiPartRankings)
 			{
-				<ul class="sm-playerRank">
-					<li class="name gdWhite"><b class="ui-link">@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</b></li>
-					<li class="pick">
-						<ul class="playerRole">
-							<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
-							<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
-						</ul>
-					</li>
-					<li class="opponent roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
-				</ul>
-			}
-		</div>
-		<div data-role="footer" data-position="fixed">
-			<div data-role="navbar" class="ui-state-persist">
-				<ul>
-					@foreach (string myPos in Model.Keys)
+				<div class="ranking-section" data-position-type="@PosRankings.Key" style="@(PosRankings.Key == Writer.MultiPartRankings.Keys.First() ? string.Empty : "display: none;")">
+					@foreach (Ranking Rank in PosRankings.Value)
 					{
-						<li><a href="#@string.Format("{0}-page", myPos.ToLower())" class="@(myEntry.Key == myPos ? "ui-btn-active" : "")">@myPos</a></li>
+						<ul class=" playerRank">
+							<li class="name gdWhite"><span>@Rank.Name@((Rank.Position == "DST") ? " D/ST" : "")</span></li>
+							<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") pick txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
+							<li class="team">
+								<ul class="playerRole">
+									<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+									<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
+								</ul>
+							</li>
+						</ul>
+					}
+				</div>
+			}			
+		</div>
+
+		<div data-role="footer" data-id="footer-nav" data-position="fixed">
+			<div data-role="navbar">
+				<ul>
+					@for (int j = 0; j < Model.Count; j++)
+					{
+						RankingsPost Author = Model[j];
+						Match firstName = Regex.Match(Author.Author, @"^\w+", RegexOptions.Singleline);
+						<li><a href="#writer_@j" class="@((i == j) ? "ui-btn-active  ui-state-persist" : string.Empty)" data-transition="none">@firstName.Value</a></li>
 					}
 				</ul>
-			</div><!-- /navbar -->
+			</div>
 		</div>
 	</div>
 }

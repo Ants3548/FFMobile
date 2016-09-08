@@ -146,11 +146,11 @@ namespace FantasyFootball.Controllers
 				}
 			}
 
-			Dictionary<string, List<FantasyFootball.Models.Ranking>> rankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);
+			List<RankingsPost> myRankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);
 
 			ViewBag.Title = "Weekly PPR Rankings";
 			ViewBag.LeagueId = Request.Params["leagueId"];
-			return View(rankings);
+			return View(myRankings);
 		}
 
 		public List<League> GetLeagues()

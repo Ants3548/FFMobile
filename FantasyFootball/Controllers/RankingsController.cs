@@ -39,29 +39,14 @@ namespace FantasyFootball.Controllers
 			reader.Close();
 
 			//Get the Writers and details
-			List<RankingsPost> myRankings = new List<RankingsPost>();
-			Match writersMatch = Regex.Match(s, @"(?i)<div\s+id=""experts"">.*?</article>", RegexOptions.Singleline);			
-			MatchCollection myWriters = Regex.Matches(writersMatch.Value, @"class=""rankings-author"".*?</time>", RegexOptions.Singleline);
+			List<RankingsPost> myRankings = CbsController.GetCbsAuthors(s);
 			MatchCollection playersMatch = Regex.Matches(s, @"id=""rankings-table"".*?</table>", RegexOptions.Singleline);
 
-            for (int i = 0; i < myWriters.Count; i++) //(Match myWriter in myWriters)
+            for (int i = 0; i < myRankings.Count; i++)
 			{
-				Match myWriter = myWriters[i];
-                RankingsPost myRankingPost = new RankingsPost();
-
-				Match imageMatch = Regex.Match(myWriter.Value, @"(?i)<img\s+src=""(?<Image>[^""]+)""", RegexOptions.Singleline);
-				myRankingPost.Thumbnail = imageMatch.Groups["Image"].Value.Trim();
-
-				Match authorMatch = Regex.Match(myWriter.Value, @"(?i)rel=""author"".*?>(?<Author>[^<]+)</a>", RegexOptions.Singleline);
-				myRankingPost.Author = authorMatch.Groups["Author"].Value.Trim();
-
-				Match twitterMatch = Regex.Match(myWriter.Value, @"(?i)class=""twitter"".*?>(?<Twitter>[^<]+)</span>", RegexOptions.Singleline);
-				myRankingPost.Twitter = twitterMatch.Groups["Twitter"].Value.Trim();
-
-				Match timeMatch = Regex.Match(myWriter.Value, @"(?i)<time[^>]+>(?<Time>[^<]+)</time>", RegexOptions.Singleline);
-				myRankingPost.TimeStamp = timeMatch.Groups["Time"].Value.Trim();
-
+                RankingsPost myRankingPost = myRankings[i];
 				List<Ranking> myPlayerRankings = new List<Ranking>();
+
 				MatchCollection myRanks = Regex.Matches(playersMatch[i].Value, @"(?i)<td\s+class=""player-info""[^>]*>(?<Html>.*?)</td>", RegexOptions.Singleline);
 				for(int j = 0; j < myRanks.Count; j++)
 				{
@@ -80,7 +65,6 @@ namespace FantasyFootball.Controllers
                 }
 
 				myRankingPost.Rankings = myPlayerRankings;
-				myRankings.Add(myRankingPost);
 			}
 
 			return View(myRankings);

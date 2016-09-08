@@ -19,7 +19,9 @@ namespace FantasyFootball.Controllers
 
 		public ActionResult Cbs()
 		{
-
+			//Our list of positions we care about
+			List<string> myPositions = new List<string>() { "QB", "WR", "RB", "TE", "K" };			
+			
 			//Get our HTML list of HTML pages
 			WebClient client = new WebClient();
 			client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
@@ -52,30 +54,34 @@ namespace FantasyFootball.Controllers
 						{
 							foreach (Match player in myPlayers)
 							{
-								string CbsId = Regex.Replace(player.Groups["CbsId"].Value, @"\D", string.Empty);
-								string[] Name = player.Groups["PlayerName"].Value.Replace(" (IR)", string.Empty).Split(new char[] { ',' });
+								string Position = player.Groups["Position"].Value.Trim();
+								if(myPositions.Contains(Position))
+								{
+									string CbsId = Regex.Replace(player.Groups["CbsId"].Value, @"\D", string.Empty);
+									string[] Name = player.Groups["PlayerName"].Value.Replace(" (IR)", string.Empty).Split(new char[] { ',' });
 
-								tbl_ff_players playerObj = db.tbl_ff_players.FirstOrDefault(x => x.Cbs == CbsId);
-								if (playerObj != null)
-								{
-									playerObj.FirstName = Name[1].Trim();
-									playerObj.LastName = Name[0].Trim();
-									playerObj.JerseyNumber = player.Groups["JerseyNumber"].Value.Trim();
-									playerObj.Position = player.Groups["Position"].Value.Trim();
-									playerObj.Team = myTeam;
-								}
-								else
-								{
-									db.tbl_ff_players.Add(new tbl_ff_players()
+									tbl_ff_players playerObj = db.tbl_ff_players.FirstOrDefault(x => x.Cbs == CbsId);
+									if (playerObj != null)
 									{
-										FirstName = Name[1].Trim(),
-										LastName = Name[0].Trim(),
-										JerseyNumber = player.Groups["JerseyNumber"].Value.Trim(),
-										Position = player.Groups["Position"].Value.Trim(),
-										Team = myTeam,
-										Cbs = CbsId
-									});
-								}
+										playerObj.FirstName = Name[1].Trim();
+										playerObj.LastName = Name[0].Trim();
+										playerObj.JerseyNumber = player.Groups["JerseyNumber"].Value.Trim();
+										playerObj.Position = Position;
+										playerObj.Team = myTeam;
+									}
+									else
+									{
+										db.tbl_ff_players.Add(new tbl_ff_players()
+										{
+											FirstName = Name[1].Trim(),
+											LastName = Name[0].Trim(),
+											JerseyNumber = player.Groups["JerseyNumber"].Value.Trim(),
+											Position = Position,
+											Team = myTeam,
+											Cbs = CbsId
+										});
+									}
+								}                                
 							}
 						}
 					}
@@ -298,6 +304,8 @@ namespace FantasyFootball.Controllers
 
 		public ActionResult Yahoo()
 		{
+			//Our list of positions we care about
+			List<string> myPositions = new List<string>() { "QB", "WR", "RB", "TE", "K" };
 
 			//Get our HTML list of HTML pages
 			WebClient client = new WebClient();

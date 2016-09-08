@@ -136,9 +136,11 @@ namespace FantasyFootball.Controllers
 		public ActionResult WeeklyRankingsPPR()
 		{
 			List<string> playerYahooIds = new List<string>(), playerCbsIds = new List<string>();
+
 			if (Session["yahoo"] != null)
 			{
 				string html = Functions.GetHttpHtml(string.Format("http://football.fantasysports.yahoo.com/f1/{0}/starters", Request.Params["leagueId"]), (string)Session["yahoo"]);
+				
 				MatchCollection players = Regex.Matches(html, @"(?i)/nfl/players/(?<PlayerId>\d+)""", RegexOptions.Singleline);
 				if (players.Count > 0)
 				{
@@ -154,11 +156,11 @@ namespace FantasyFootball.Controllers
 				}
 			}
 
-			Dictionary<string, List<FantasyFootball.Models.Ranking>> rankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);					
+			List<RankingsPost> myRankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);					
 
 			ViewBag.Title = "Weekly PPR Rankings";
 			ViewBag.LeagueId = Request.Params["leagueId"];
-			return View(rankings);
+			return View(myRankings);
 		}
 
 		protected List<League> GetLeagues()
@@ -332,7 +334,7 @@ namespace FantasyFootball.Controllers
 								{
 									myOwners[keyName].Add(new Owner()
 									{
-										Rank = Int32.Parse(Functions.StripHtmlTags(myTDs[0].Groups["Content"].Value)),
+										Rank = Int32.Parse(Regex.Match(myTDs[0].Groups["Content"].Value, @"\d+", RegexOptions.Singleline).Value),
 										Id = ownerMatch.Groups["OwnerId"].Value,
 										TeamName = ownerMatch.Groups["TeamName"].Value,
 										Avatar = ownerMatch.Groups["Avatar"].Value,

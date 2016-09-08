@@ -140,6 +140,7 @@
     <Content Include="Content\images\bgs\sd.jpg" />
     <Content Include="Content\images\bgs\sea.jpg" />
     <Content Include="Content\images\bgs\sf.jpg" />
+    <Content Include="Content\images\bgs\la.jpg" />
     <Content Include="Content\images\bgs\stl.jpg" />
     <Content Include="Content\images\bgs\tb.jpg" />
     <Content Include="Content\images\bgs\ten.jpg" />

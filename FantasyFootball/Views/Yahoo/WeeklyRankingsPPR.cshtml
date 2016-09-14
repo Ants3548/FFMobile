@@ -1,5 +1,12 @@
 ﻿@model List<RankingsPost>
 
+@section HeadCSS
+{
+	<style type="text/css">
+		.smLabel { position: absolute; display: inline-block; padding: 2px 3px; line-height: 10px; left: 30px; bottom: 0; z-index: 10;}
+	</style>
+}
+
 @section BodyScripts
 {
 	<script type="text/javascript">
@@ -49,8 +56,8 @@
 							<li class="@((Rank.Active) ? "gdGreen" : "gdBlack") pick txWhite txBold txCenter roundTopL roundBottomL">@Rank.Rank</li>
 							<li class="team">
 								<ul class="playerRole">
-									<li class="teamIcon"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
-									<li class="gdBlack txWhite txBold txCenter roundTopR roundBottomR">@Rank.Position</li>
+									<li class="teamIcon"><div class="smLabel gdBlack txWhite txBold txCenter">@(Rank.IsHomeTeam ? "vs" : "@")</div><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Team.ToLower())" width="40" height="30" /></li>
+									<li class="roundTopR roundBottomR"><img src="~/Content/images/icons/teams/80x60/@string.Format("{0}.jpg", Rank.Opponent.ToLower())" width="40" height="30" class="roundTopR roundBottomR" /></li>
 								</ul>
 							</li>
 						</ul>

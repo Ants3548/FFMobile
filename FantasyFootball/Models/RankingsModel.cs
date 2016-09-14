@@ -15,5 +15,6 @@ namespace FantasyFootball.Models
         public int Bye { get; set; }
         public string Opponent { get; set; }
 		public bool Active { get; set; }
+		public bool IsHomeTeam { get; set; }
 	}
 }

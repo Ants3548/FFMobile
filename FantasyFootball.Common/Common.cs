@@ -9,7 +9,7 @@ using System.Web;
 
 namespace FantasyFootball.Common
 {
-	public class Functions
+	public partial class Functions
 	{
 		public static void CheckForSession()
 		{

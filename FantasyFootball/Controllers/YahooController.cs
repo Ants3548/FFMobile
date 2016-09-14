@@ -62,12 +62,17 @@ namespace FantasyFootball.Controllers
 			if (Session["yahoo"] != null)
 			{
 				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"]);
-				myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
-				if (myStats == null)
+				if(myPlayers.Count > 0)
 				{
-					SetTeamWeeklyStats(Request.Params["leagueId"], 3);
-					myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+					Augment.UpdateOpponents(ref myPlayers);
 				}
+
+				//myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				//if (myStats == null)
+				//{
+				//	SetTeamWeeklyStats(Request.Params["leagueId"], 3);
+				//	myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
+				//}
 			}				
 			else
 				return RedirectToAction("Yahoo", "Login");
@@ -156,7 +161,8 @@ namespace FantasyFootball.Controllers
 				}
 			}
 
-			List<RankingsPost> myRankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);					
+			List<RankingsPost> myRankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);
+			Augment.UpdateOpponents(ref myRankings);
 
 			ViewBag.Title = "Weekly PPR Rankings";
 			ViewBag.LeagueId = Request.Params["leagueId"];

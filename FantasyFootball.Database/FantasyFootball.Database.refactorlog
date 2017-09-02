@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="cdbcba19-904e-4e0a-943c-32b1a2b48753" ChangeDateTime="09/02/2017 01:29:24">
+    <Property Name="ElementName" Value="[dbo].[tbl_ff_matchups].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tbl_ff_matchups]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MatchupId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7ba0fc5c-5332-4921-84e7-2e68851203ea" ChangeDateTime="09/02/2017 01:34:21">
+    <Property Name="ElementName" Value="[dbo].[tbl_ff_players].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tbl_ff_players]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PlayerId" />
+  </Operation>
+</Operations>

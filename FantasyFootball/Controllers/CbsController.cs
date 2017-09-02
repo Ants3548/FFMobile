@@ -27,7 +27,7 @@ namespace FantasyFootball.Controllers
 
 			foreach(string myPosition in myPositions)
 			{
-				string html = Functions.GetHttpHtml(string.Format("http://www.cbssports.com/fantasy/football/rankings/ppr/{0}/weekly/", myPosition), null);
+				string html = Functions.GetHttpHtml(string.Format("https://www.cbssports.com/fantasy/football/rankings/ppr/{0}/weekly/", myPosition), null);
 
 				//Make sure the author data is populated
 				if (myRankings.Count <= 0)

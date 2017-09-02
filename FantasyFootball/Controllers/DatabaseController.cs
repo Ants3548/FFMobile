@@ -390,7 +390,11 @@ namespace FantasyFootball.Controllers
 			{
 				WebClient myclient = new WebClient();
 				myclient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-				Stream mydata = myclient.OpenRead(string.Format("http://www.usatoday.com/sports/nfl/schedule/{1}/season-regular/{0}/", i, myYear));
+
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                Stream mydata = myclient.OpenRead(string.Format("https://www.usatoday.com/sports/nfl/schedule/{1}/season-regular/{0}/", i, myYear));
 				StreamReader myreader = new StreamReader(mydata);
 				string html = myreader.ReadToEnd();
 				mydata.Close();
@@ -435,7 +439,7 @@ namespace FantasyFootball.Controllers
 		public ActionResult YearlyWeeks()
 		{
 			FantasyFootballEntities db = new FantasyFootballEntities();
-			DateTime mySeasonStartDate = new DateTime(2016, 9, 6);
+			DateTime mySeasonStartDate = new DateTime(2017, 9, 5);
 
 			for (int i = 0; i < 17; i++)
 			{

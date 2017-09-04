@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
-using FantasyFootball.Models;
+using FantasyFootball.Classes;
 using FantasyFootball.DAL;
 using FantasyFootball.Common;
 

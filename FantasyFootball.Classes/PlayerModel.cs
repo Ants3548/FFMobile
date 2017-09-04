@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FantasyFootball.Models
+﻿namespace FantasyFootball.Classes
 {
-	public class Player
+    public class Player
 	{
 		public string PlayerId { get; set; }
 		public string PlayerAltId { get; set; }

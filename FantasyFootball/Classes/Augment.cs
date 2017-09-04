@@ -1,5 +1,5 @@
 ﻿using FantasyFootball.DAL;
-using FantasyFootball.Models;
+using FantasyFootball.Classes;
 
 using System;
 using System.Collections.Generic;

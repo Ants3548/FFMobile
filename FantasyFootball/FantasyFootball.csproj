@@ -23,6 +23,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -311,13 +312,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\LeaguesModel.cs" />
-    <Compile Include="Models\OwnerModel.cs" />
-    <Compile Include="Models\PlayerModel.cs" />
-    <Compile Include="Models\RankingsModel.cs" />
-    <Compile Include="Models\RankingsPostModel.cs" />
-    <Compile Include="Models\TeamWeeklyStatsModel.cs" />
-    <Compile Include="Models\TransactionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -367,9 +361,14 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\players\" />
+    <Folder Include="Models\" />
     <Folder Include="Views\Cbs\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FantasyFootball.Classes\FantasyFootball.Classes.csproj">
+      <Project>{15b7c8d0-9d8e-4eda-b7a0-c4c89ba8ec58}</Project>
+      <Name>FantasyFootball.Classes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FantasyFootball.Common\FantasyFootball.Common.csproj">
       <Project>{a6f60d49-20e5-420a-bafb-a703ddfbe931}</Project>
       <Name>FantasyFootball.Common</Name>
@@ -377,6 +376,10 @@
     <ProjectReference Include="..\FantasyFootball.DAL\FantasyFootball.DAL.csproj">
       <Project>{35bd008d-2762-4446-8f61-58bf2d7ca5fc}</Project>
       <Name>FantasyFootball.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FantasyFootball.Interfaces\FantasyFootball.Interfaces.csproj">
+      <Project>{954854a6-63a9-48cd-bfda-e4e65b6016f1}</Project>
+      <Name>FantasyFootball.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

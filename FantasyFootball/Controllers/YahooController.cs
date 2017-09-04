@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
-using FantasyFootball.Models;
+using FantasyFootball.Classes;
 using FantasyFootball.Common;
 using FantasyFootball.DAL;
 using System.Collections.Specialized;
@@ -64,7 +64,7 @@ namespace FantasyFootball.Controllers
 				myPlayers = GetPlayers(Request.Params["leagueId"], Request.Params["teamId"]);
 				if(myPlayers.Count > 0)
 				{
-					Augment.UpdateOpponents(ref myPlayers);
+					//Augment.UpdateOpponents(ref myPlayers);
 				}
 
 				//myStats = Functions.GetWeeklyStats("Yahoo", Request.Params["leagueId"]);
@@ -162,7 +162,7 @@ namespace FantasyFootball.Controllers
 			}
 
 			List<RankingsPost> myRankings = CbsController.GetRankingsWeeklyPPR(playerCbsIds);
-			Augment.UpdateOpponents(ref myRankings);
+			//Augment.UpdateOpponents(ref myRankings);
 
 			ViewBag.Title = "Weekly PPR Rankings";
 			ViewBag.LeagueId = Request.Params["leagueId"];

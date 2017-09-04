@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
-using FantasyFootball.Models;
+using FantasyFootball.Classes;
 using FantasyFootball.DAL;
 using FantasyFootball.Common;
 
@@ -20,7 +20,7 @@ namespace FantasyFootball.Controllers
 
 		public ActionResult Index()
 		{
-			List<Models.League> myLeagues = new List<League>();
+			List<League> myLeagues = new List<League>();
 
 			if (Session["espn"] != null)
 				myLeagues = GetLeagues();
@@ -89,7 +89,7 @@ namespace FantasyFootball.Controllers
 		{
 			Functions.CheckForSession();
 
-			List<Models.League> myLeagues = new List<League>();
+			List<League> myLeagues = new List<League>();
 
 			if (Session["espn"] != null)
 				myLeagues = GetLeagues();
@@ -157,7 +157,7 @@ namespace FantasyFootball.Controllers
 		{
 			string html = Functions.GetHttpHtml("http://games.espn.go.com/frontpage/football", (string)Session["espn"]);
 			Match targetHtml = Regex.Match(html, @"(?i)my-teams\s+lm-container.*?editlist", RegexOptions.Singleline);
-			List<Models.League> myLeagues = new List<League>();
+			List<League> myLeagues = new List<League>();
 			if (targetHtml.Success)
 			{
 				MatchCollection myTeams = Regex.Matches(targetHtml.Value, @"class=""left"".*?clear:\s*both", RegexOptions.Singleline);

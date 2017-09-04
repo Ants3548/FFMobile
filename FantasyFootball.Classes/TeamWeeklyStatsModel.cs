@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FantasyFootball.Models
+﻿namespace FantasyFootball.Classes
 {
-	public class TeamWeeklyStats
+    public class TeamWeeklyStats
 	{
 		public string Team { get; set; }
 		public string Position { get; set; }

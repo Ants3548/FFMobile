@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
-using FantasyFootball.Models;
+using FantasyFootball.Classes;
 using FantasyFootball.Common;
 using FantasyFootball.DAL;
 using System.Collections.Specialized;
